@@ -43,11 +43,11 @@ public class BallLauncherBarrel : MonoBehaviour
 
     IEnumerator setAngleRoutine()
     {
-        angleAxis = Quaternion.Euler(theta, 0f, 0f);
+        angleAxis = Quaternion.Euler(0f, 0f, 0f);
         yield return new WaitForSeconds(aimSpeed);
         aimTimeCount = 0.0f;
         //theta = Random.Range(35f, 45f);
-        theta = 35f;
+        theta = 10f;
         angleAxis = Quaternion.Euler(-theta, 0f, 0f);
         yield return new WaitForSeconds(aimSpeed);
         pitch();
@@ -69,7 +69,7 @@ public class BallLauncherBarrel : MonoBehaviour
         float ballMass = ball.GetComponent<Rigidbody>().mass;
         float cosSquaerdTheta = (1f + Mathf.Cos(2f * theta)) / 2f;
         //float u = Mathf.Sqrt(Mathf.Abs(((distance * Mathf.Tan(theta)) - (-1 * Physics.gravity.y * distance * distance))/(2f * heightAtCatch * cosSquaerdTheta)));
-        float u = Mathf.Sqrt(Mathf.Abs((-1 * Physics.gravity.y * distance * distance)/(((distance * Mathf.Tan(theta)) - heightAtCatch) * cosSquaerdTheta * 2)));
+        float u = Mathf.Sqrt(Mathf.Abs((-1 * Physics.gravity.y * distance * distance)/(((distance * Mathf.Tan(theta)) - heightAtCatch - ballSpawn.position.y) * cosSquaerdTheta * 2)));
 
         Debug.Log("Force Applied" + (u * ballMass));
         Debug.Log("With Theta: " + theta);
