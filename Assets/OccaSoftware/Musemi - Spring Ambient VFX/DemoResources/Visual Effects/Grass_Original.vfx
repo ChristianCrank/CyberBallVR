@@ -95,7 +95,7 @@ MonoBehaviour:
   uiBounds:
     serializedVersion: 2
     x: -691
-    y: -596
+    y: -597
     width: 1642
     height: 2510
 --- !u!114 &114350483966674976
@@ -1022,7 +1022,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
@@ -4256,7 +4256,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.3936994969844818,"y":0.4540000259876251,"z":0.2188280075788498}'
+      m_SerializableObject: '{"x":0.29076144099235537,"y":0.8396226167678833,"z":0.2574314773082733}'
     m_Space: 2147483647
   m_Property:
     name: A
@@ -4392,7 +4392,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.3696112036705017,"y":0.4270000159740448,"z":0.2117920070886612}'
+      m_SerializableObject: '{"x":0.12643472850322724,"y":0.6226415038108826,"z":0.07929868251085282}'
     m_Space: 2147483647
   m_Property:
     name: B
@@ -5203,7 +5203,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 0
+  m_UICollapsed: 1
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
