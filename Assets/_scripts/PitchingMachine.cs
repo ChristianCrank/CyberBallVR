@@ -24,10 +24,16 @@ public class PitchingMachine : MonoBehaviour
     [Serializable]
     private class PitchingInstructions
     {
-        [Range(0f, 90f)]
+        [Range(20f, 45f)]
         public float rotation;
-        [Range(0f, 100f)]
+        [Range(2f, 2.5f)]
         public float force;
+
+        //5 rotation - 5 force
+        //23.5 rotation - force
+        //25 roation - 2.25 force
+        //35 rotation - force
+        //45 rotation - 2 force
     }
 
     [SerializeField] private PitchingInstructions[] pitches;
@@ -55,13 +61,13 @@ public class PitchingMachine : MonoBehaviour
     void togglePitch()
     {
         isPitching = !isPitching;
-        Debug.Log("Toggling to: " + isPitching);
+        //Log("Toggling to: " + isPitching);
         if (isPitching) StartCoroutine(SetAim());
     }
 
     IEnumerator SetAim()
     {
-        Debug.Log("Setting Aim");
+        //Debug.Log("Setting Aim");
         float rotation = pitches[currentPitch].rotation;
         emptyRotator.Rotate(rotation, 0f, 0f);
         rotateTo = emptyRotator.rotation;
@@ -71,7 +77,7 @@ public class PitchingMachine : MonoBehaviour
        
         Pitch(); //pitch
 
-        Debug.Log("Resetting Aim");
+        //Debug.Log("Resetting Aim");
         emptyRotator.Rotate(-rotation, 0f, 0f);
         rotateTo = emptyRotator.rotation;
         rotating = true;
@@ -83,6 +89,14 @@ public class PitchingMachine : MonoBehaviour
 
     private void Pitch()
     {
+        ball.gameObject.SetActive(false);
+        ball.position = ballSpawn.position;
+        ball.up = transform.forward;
+        ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        ball.gameObject.SetActive(true);
+        ball.GetComponent<Rigidbody>().AddForce(transform.up * pitches[currentPitch].force, ForceMode.Impulse);
+
+
         Debug.Log("Pitching at angle: " + pitches[currentPitch].rotation + " with force: " + pitches[currentPitch].force);
     }
 
@@ -91,15 +105,6 @@ public class PitchingMachine : MonoBehaviour
         if (rotating)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rotateTo, (pitches[currentPitch].rotation/timeToTurn) * Time.deltaTime);
-            if (passedTime < timeToTurn)
-            {
-                passedTime += Time.deltaTime;
-            } 
-            else
-            {
-                Debug.Log("That took" + passedTime);
-                passedTime = 0f;
-            }
         }
     }
 }
