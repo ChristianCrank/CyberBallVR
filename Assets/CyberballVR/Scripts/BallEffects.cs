@@ -6,18 +6,16 @@ using UnityEngine.XR.Interaction.Toolkit;
 //Made by Christian
 public class BallEffects : MonoBehaviour
 {
-    private XRGrabInteractable grabInteractable;
-
-
     public int grabCount = 0;
-    ParticleSystem particleSystem;
+    ParticleSystem particleSys;
+    Outline ballOutline;
 
     private void Start()
     {
-        grabInteractable = GetComponent<XRGrabInteractable>();
-        particleSystem = GetComponentInChildren<ParticleSystem>();
+        particleSys = GetComponentInChildren<ParticleSystem>();
+        ballOutline = GetComponent<Outline>();
 
-        var main = particleSystem.main;
+        var main = particleSys.main;
         main.startSpeed = 10;
 
         UpdateObjectProperties();
@@ -25,53 +23,76 @@ public class BallEffects : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Plus)) 
+        if (Input.GetKeyDown(KeyCode.Tab)) 
         {
-            EventManager.onSuccessfulCatch += IncrementGrabCount;
-            EventManager.onSuccessfulCatch.Invoke();
-            EventManager.onSuccessfulCatch -= IncrementGrabCount;
+            
+            EventManager.onSuccessfulCatch?.Invoke();
+            
         }
+    }
+
+    private void OnEnable()
+    {
+        EventManager.onSuccessfulCatch += IncrementGrabCount;
+        EventManager.onBallDropped += ResetGrabCount;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.onSuccessfulCatch -= IncrementGrabCount;
+        EventManager.onBallDropped -= ResetGrabCount;
     }
     private void IncrementGrabCount()
     {
         // Increment the grab count when the object is grabbed
         grabCount++;
 
-        // Do something with the grab count (change color, speed of particle effects, etc.)
+        //(change color, speed of particle effects, etc.)
+        UpdateObjectProperties();
+    }
+
+    private void ResetGrabCount()
+    {
+        grabCount = 0;
         UpdateObjectProperties();
     }
 
     private void UpdateObjectProperties()
     {
-        if (particleSystem != null)
+        if (particleSys != null)
         {
 
-            var main = particleSystem.main;
+            var main = particleSys.main;
+            var emission = particleSys.emission;
 
-            if(grabCount < 2)
-            { 
-                main.startColor = Color.white;
+            if (grabCount < 2)
+            {
+                main.startColor = Color.red;
+                ballOutline.OutlineColor = Color.red;
             }
             else if(grabCount >= 2 && grabCount < 4) 
-            { 
-                main.startColor = Color.red;
+            {
+                main.startColor = Color.yellow;
+                ballOutline.OutlineColor = Color.yellow;
             }
             else if (grabCount >= 4 && grabCount < 6)
             {
-                main.startColor = Color.yellow;
+                main.startColor = Color.green;
+                ballOutline.OutlineColor = Color.green;
             }
             else if (grabCount >= 6 && grabCount < 8)
             {
-                main.startColor = Color.green;
+                main.startColor = Color.blue;
+                ballOutline.OutlineColor = Color.blue;
             }
             else if (grabCount >= 8)
             {
-                main.startColor = Color.blue;
+                main.startColor = Color.magenta;
+                ballOutline.OutlineColor = Color.magenta;
             }
-            // Example: Change speed of particle effects based on grab count
-
-          
-            main.startSpeed = main.startSpeed.constant + (grabCount ); // Adjust speed based on grab count
+            
+            // Change emmision rate of particle effects based on grab count
+            emission.rateOverTime = new ParticleSystem.MinMaxCurve(emission.rateOverTime.constant + (grabCount * 1.25f));   // Adjust speed based on grab count
 
         }
     }

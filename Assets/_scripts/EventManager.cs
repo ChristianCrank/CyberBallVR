@@ -10,4 +10,19 @@ public class EventManager : MonoBehaviour
     public delegate void OnSuccessfulCatch(); //Triggered by catching the ball
     public static OnSuccessfulCatch onSuccessfulCatch;
 
+    //Temporaryily simulates ball catch
+    public void CatchBall()
+    {
+        onSuccessfulCatch?.Invoke();
+    }
+
+    public delegate void OnBallDropped(); //Triggered on missed catch
+    public static OnBallDropped onBallDropped;
+
+    //Temporarily simulates ball drop
+    public void DropBall()
+    {
+        onBallDropped?.Invoke();
+    }
+
 }
