@@ -8,7 +8,7 @@ public class PitchingBtn : MonoBehaviour
     {
         if(EventManager.onTogglePitch != null)
         {
-            EventManager.onTogglePitch.Invoke();
+            //EventManager.onTogglePitch.Invoke();
         }
     }
 }

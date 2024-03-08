@@ -23,7 +23,7 @@ public class TestPlrMovement : MonoBehaviour
 	}
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.P)) EventManager.onTogglePitch.Invoke();
+		//if (Input.GetKeyDown(KeyCode.P)) EventManager.onTogglePitch.Invoke();
 
 		if (Input.GetKeyDown(KeyCode.W))
 		{

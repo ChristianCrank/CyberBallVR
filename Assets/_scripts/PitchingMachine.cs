@@ -58,12 +58,17 @@ public class PitchingMachine : MonoBehaviour
         passedTime = 0f;
     }
 
-    void togglePitch()
+    void togglePitch(bool b)
     {
-        isPitching = !isPitching;
+        isPitching = b;
         //Log("Toggling to: " + isPitching);
         if (isPitching) StartCoroutine(SetAim());
     }
+
+    /*void pitchOnce()
+    {
+        StartCoroutine(SetAim());
+    }*/
 
     IEnumerator SetAim()
     {
@@ -84,6 +89,7 @@ public class PitchingMachine : MonoBehaviour
         yield return new WaitForSeconds(timeToTurn); //wait till at angle
         rotating = false;
         currentPitch = (currentPitch + 1) % pitches.Length;
+        yield return new WaitForSeconds(4);
         if (isPitching) StartCoroutine(SetAim());
     }
 
