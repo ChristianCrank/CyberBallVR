@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class EventManager : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class EventManager : MonoBehaviour
     public static OnSuccessfulCatch onSuccessfulCatch;
 
     //Temporaryily simulates ball catch
-    public void CatchBall()
+    public static void CatchBall()
     {
         onSuccessfulCatch?.Invoke();
     }
@@ -20,12 +21,17 @@ public class EventManager : MonoBehaviour
     public static OnBallDropped onBallDropped;
 
     //Temporarily simulates ball drop
-    public void DropBall()
+    public static void DropBall()
     {
         onBallDropped?.Invoke();
     }
 
     public delegate void OnChangeState(int x);
     public static OnChangeState onChangeState;
+
+
+    public delegate void OnBallGrabbed(); //Triggered when grabbing ball, not from catch
+    public static OnBallGrabbed onBallGrabbed;
+   
 
 }

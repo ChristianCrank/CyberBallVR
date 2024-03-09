@@ -23,32 +23,38 @@ public class BallEffects : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab)) 
+        //if (Input.GetKeyDown(KeyCode.Tab)) 
+        //{
+            
+        //    EventManager.onSuccessfulCatch?.Invoke();
+            
+        //}
+    }
+
+    //private void OnEnable()
+    //{
+    //    EventManager.onSuccessfulCatch += IncrementGrabCount;
+    //    EventManager.onBallDropped += ResetGrabCount;
+    //}
+
+    //private void OnDisable()
+    //{
+    //    EventManager.onSuccessfulCatch -= IncrementGrabCount;
+    //    EventManager.onBallDropped -= ResetGrabCount;
+    //}
+    public void IncrementGrabCount()
+    {
+        if (AI.dropped == false)
         {
-            
-            EventManager.onSuccessfulCatch?.Invoke();
-            
+            // Increment the grab count when the object is grabbed
+            grabCount++;
+
+            //(change color, speed of particle effects, etc.)
+            UpdateObjectProperties();
         }
-    }
-
-    private void OnEnable()
-    {
-        EventManager.onSuccessfulCatch += IncrementGrabCount;
-        EventManager.onBallDropped += ResetGrabCount;
-    }
-
-    private void OnDisable()
-    {
-        EventManager.onSuccessfulCatch -= IncrementGrabCount;
-        EventManager.onBallDropped -= ResetGrabCount;
-    }
-    private void IncrementGrabCount()
-    {
-        // Increment the grab count when the object is grabbed
-        grabCount++;
-
-        //(change color, speed of particle effects, etc.)
-        UpdateObjectProperties();
+        else
+            ResetGrabCount();
+        
     }
 
     private void ResetGrabCount()
