@@ -7,15 +7,16 @@ using UnityEngine.UIElements;
 
 public class AI : MonoBehaviour
 {
+    GameManager gameManager;
     GameObject ball;
     public Transform ballHolder;
-    public List<Transform> playerList;
     public float launchAngle = 55f;
     public static bool dropped = true;
 
     private void Start()
     {
         dropped = true;
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -39,7 +40,7 @@ public class AI : MonoBehaviour
 
     private void FixedUpdate()
     {
-        this.transform.LookAt(playerList[0].position);
+        this.transform.LookAt(gameManager.playerList[0].transform);
     }
 
     private IEnumerator ThrowBall()
@@ -53,7 +54,7 @@ public class AI : MonoBehaviour
             rb.isKinematic = false;
 
             Vector3 startPos = ball.transform.position;
-            Vector3 targetPos = playerList[0].transform.position;
+            Vector3 targetPos = gameManager.playerList[0].transform.position;
 
             // Calculate direction to target
             Vector3 direction = (targetPos - startPos).normalized;
