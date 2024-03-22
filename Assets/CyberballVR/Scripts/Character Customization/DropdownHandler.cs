@@ -20,16 +20,27 @@ public class DropdownHandler : MonoBehaviour
     void DropdownItemSelected(TMP_Dropdown dropdown)
     {
         string OptionType = dropdown.name;
-        int Value = dropdown.value;
-        string NameTest = dropdown.options[dropdown.value].text;
+        int OptionValue = dropdown.value;
+        string OptionName = dropdown.options[dropdown.value].text;
         
-        Debug.Log("You have selected " + Value + " Of " + OptionType + " The Name is: " + NameTest);
+        Debug.Log("You have selected " + OptionValue + " Of " + OptionType + " The Name is: " + OptionName);
 
         if (customizeHandler != null)
         {
             if (OptionType == "Hair Options")
             {
-                customizeHandler.GetHairSelection(NameTest);
+                customizeHandler.GetHairSelection(OptionName);
+            } else if (OptionType == "Clothing Options")
+            {
+                customizeHandler.GetClothingSelection(OptionName);
+            }
+            else if (OptionType == "Accessories 1 Options")
+            {
+                customizeHandler.GetAccessoryOneSelection(OptionName);
+            }
+            else if (OptionType == "Accessories 2 Options")
+            {
+                customizeHandler.GetAccessoryTwoSelection(OptionName);
             }
         }
     }
