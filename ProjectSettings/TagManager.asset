@@ -7,10 +7,6 @@ TagManager:
   - Anchor
   - Ball
   - Terrain
-  - AISpawn
-  - PlayerSpawn
-  - PlayerCharacter
-  - BallSpawn
   layers:
   - Default
   - TransparentFX
