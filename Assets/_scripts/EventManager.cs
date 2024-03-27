@@ -32,6 +32,15 @@ public class EventManager : MonoBehaviour
 
     public delegate void OnBallGrabbed(); //Triggered when grabbing ball, not from catch
     public static OnBallGrabbed onBallGrabbed;
-   
+
+
+    public delegate void OnAISuccessfulCatch(); //Triggered by catching the ball
+    public static OnAISuccessfulCatch onAISuccessfulCatch;
+
+    //Temporaryily simulates ball catch
+    public static void AICatchBall()
+    {
+        onSuccessfulCatch?.Invoke();
+    }
 
 }

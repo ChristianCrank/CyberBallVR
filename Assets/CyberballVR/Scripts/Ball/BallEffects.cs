@@ -7,6 +7,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class BallEffects : MonoBehaviour
 {
     public int grabCount = 0;
+    public int fxChangeInterval;
     ParticleSystem particleSys;
     Outline ballOutline;
 
@@ -31,17 +32,17 @@ public class BallEffects : MonoBehaviour
         //}
     }
 
-    //private void OnEnable()
-    //{
-    //    EventManager.onSuccessfulCatch += IncrementGrabCount;
-    //    EventManager.onBallDropped += ResetGrabCount;
-    //}
+    private void OnEnable()
+    {
+        EventManager.onAISuccessfulCatch += IncrementGrabCount;
+        EventManager.onBallDropped += ResetGrabCount;
+    }
 
-    //private void OnDisable()
-    //{
-    //    EventManager.onSuccessfulCatch -= IncrementGrabCount;
-    //    EventManager.onBallDropped -= ResetGrabCount;
-    //}
+    private void OnDisable()
+    {
+        EventManager.onAISuccessfulCatch -= IncrementGrabCount;
+        EventManager.onBallDropped -= ResetGrabCount;
+    }
     public void IncrementGrabCount()
     {
         if (AI.dropped == false)
@@ -71,27 +72,27 @@ public class BallEffects : MonoBehaviour
             var main = particleSys.main;
             var emission = particleSys.emission;
 
-            if (grabCount < 2)
+            if (grabCount < fxChangeInterval)
             {
                 main.startColor = Color.red;
                 ballOutline.OutlineColor = Color.red;
             }
-            else if(grabCount >= 2 && grabCount < 4) 
+            else if(grabCount >= fxChangeInterval && grabCount < fxChangeInterval * 2) 
             {
                 main.startColor = Color.yellow;
                 ballOutline.OutlineColor = Color.yellow;
             }
-            else if (grabCount >= 4 && grabCount < 6)
+            else if (grabCount >= fxChangeInterval * 2 && grabCount < fxChangeInterval * 3)
             {
                 main.startColor = Color.green;
                 ballOutline.OutlineColor = Color.green;
             }
-            else if (grabCount >= 6 && grabCount < 8)
+            else if (grabCount >= fxChangeInterval * 3 && grabCount < fxChangeInterval * 4)
             {
                 main.startColor = Color.blue;
                 ballOutline.OutlineColor = Color.blue;
             }
-            else if (grabCount >= 8)
+            else if (grabCount >= fxChangeInterval * 4)
             {
                 main.startColor = Color.magenta;
                 ballOutline.OutlineColor = Color.magenta;
