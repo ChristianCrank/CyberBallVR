@@ -14,8 +14,8 @@ public class AI : MonoBehaviour
     public Transform ballSpawn;
 
     public float launchAngle;
-    public static bool dropped = true;
-
+    
+    public int catchCount;
     public enum TargetingPreference
     {
         Random, 
@@ -27,25 +27,24 @@ public class AI : MonoBehaviour
     private void Start()
     {
         launchAngle = 25f;
-        targetingPreference = TargetingPreference.FavorAI;
-
+        targetingPreference = TargetingPreference.Random;
+        catchCount = 0;
         
-
-        dropped = true;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag.Equals("Ball"))
         {
 
-            Debug.Log("AI HIT");
-
             ball = other.gameObject;
             ball.transform.position = ballSpawn.position;
             ball.transform.SetParent(this.gameObject.transform);
             GameManager.currentBallHolder = this.gameObject;
+            catchCount++;
+
             EventManager.onAISuccessfulCatch?.Invoke();
 
             Rigidbody rb = ball.GetComponent<Rigidbody>();
@@ -92,7 +91,7 @@ public class AI : MonoBehaviour
             ball.transform.SetParent(null);
 
 
-            dropped = false;
+            BallManager.dropped = false;
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             rb.isKinematic = false;
             

@@ -22,16 +22,6 @@ public class BallEffects : MonoBehaviour
         UpdateObjectProperties();
     }
 
-    private void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.Tab)) 
-        //{
-            
-        //    EventManager.onSuccessfulCatch?.Invoke();
-            
-        //}
-    }
-
     private void OnEnable()
     {
         EventManager.onAISuccessfulCatch += IncrementGrabCount;
@@ -45,7 +35,7 @@ public class BallEffects : MonoBehaviour
     }
     public void IncrementGrabCount()
     {
-        if (AI.dropped == false)
+        if (BallManager.dropped == false)
         {
             // Increment the grab count when the object is grabbed
             grabCount++;

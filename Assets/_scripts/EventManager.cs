@@ -37,7 +37,7 @@ public class EventManager : MonoBehaviour
     public delegate void OnAISuccessfulCatch(); //Triggered by catching the ball
     public static OnAISuccessfulCatch onAISuccessfulCatch;
 
-    //Temporaryily simulates ball catch
+    //Temporarily simulates ball catch
     public static void AICatchBall()
     {
         onSuccessfulCatch?.Invoke();

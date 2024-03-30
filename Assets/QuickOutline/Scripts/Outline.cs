@@ -99,7 +99,8 @@ public class Outline : MonoBehaviour {
     needsUpdate = true;
   }
 
-  void OnEnable() {
+
+    void OnEnable() {
     foreach (var renderer in renderers) {
 
       // Append outline shaders
@@ -178,29 +179,38 @@ public class Outline : MonoBehaviour {
   }
 
   void LoadSmoothNormals() {
+        // Before attempting to access mesh filters, ensure they're not null and the mesh is readable.
+        foreach (var meshFilter in GetComponentsInChildren<MeshFilter>())
+        {
+            if (meshFilter.sharedMesh == null || !meshFilter.sharedMesh.isReadable)
+            {
+                Debug.LogWarning("MeshFilter's mesh is either null or not readable, skipping. GameObject: " + meshFilter.gameObject.name);
+                continue; // Skip to the next meshFilter if this one's mesh is null or not readable.
+            }
 
-    // Retrieve or generate smooth normals
-    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
+            // Skip if smooth normals have already been adopted
+            if (!registeredMeshes.Add(meshFilter.sharedMesh))
+            {
+                continue;
+            }
 
-      // Skip if smooth normals have already been adopted
-      if (!registeredMeshes.Add(meshFilter.sharedMesh)) {
-        continue;
-      }
+            // The rest of your existing code...
+            // Retrieve or generate smooth normals
+            var index = bakeKeys.IndexOf(meshFilter.sharedMesh);
+            var smoothNormals = (index >= 0) ? bakeValues[index].data : SmoothNormals(meshFilter.sharedMesh);
 
-      // Retrieve or generate smooth normals
-      var index = bakeKeys.IndexOf(meshFilter.sharedMesh);
-      var smoothNormals = (index >= 0) ? bakeValues[index].data : SmoothNormals(meshFilter.sharedMesh);
+            // Store smooth normals in UV3
+            meshFilter.sharedMesh.SetUVs(3, smoothNormals);
 
-      // Store smooth normals in UV3
-      meshFilter.sharedMesh.SetUVs(3, smoothNormals);
+            // Combine submeshes
+            var renderer = meshFilter.GetComponent<Renderer>();
 
-      // Combine submeshes
-      var renderer = meshFilter.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                CombineSubmeshes(meshFilter.sharedMesh, renderer.sharedMaterials);
+            }
+        }
 
-      if (renderer != null) {
-        CombineSubmeshes(meshFilter.sharedMesh, renderer.sharedMaterials);
-      }
-    }
 
     // Clear UV3 on skinned mesh renderers
     foreach (var skinnedMeshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>()) {
@@ -220,6 +230,12 @@ public class Outline : MonoBehaviour {
 
   List<Vector3> SmoothNormals(Mesh mesh) {
 
+    // Ensure the mesh is not null and is readable before proceeding.
+    if (mesh == null || !mesh.isReadable)
+    {
+        Debug.LogWarning("Attempting to smooth normals on a null or not readable mesh.");
+        return new List<Vector3>(); // Return an empty list to avoid further errors.
+    }
     // Group vertices by location
     var groups = mesh.vertices.Select((vertex, index) => new KeyValuePair<Vector3, int>(vertex, index)).GroupBy(pair => pair.Key);
 

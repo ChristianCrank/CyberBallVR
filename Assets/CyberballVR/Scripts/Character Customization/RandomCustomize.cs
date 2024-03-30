@@ -15,7 +15,7 @@ public class RandomCustomize : MonoBehaviour
     public GameObject BodyAccessory2Options;
 
 
-    public void Start()
+    public void Awake()
     {
         RandomizeCustomization();
     }
