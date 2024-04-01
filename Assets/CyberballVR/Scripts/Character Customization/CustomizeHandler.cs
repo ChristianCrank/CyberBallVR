@@ -23,18 +23,54 @@ public class CustomizeHandler : MonoBehaviour
 
     string Accessory1_Selection;
     string Accessory2_Selection;
+    string Hair_Selection;
 
     [Header("Accessory Dropdowns")]
     public TMP_Dropdown Accessory1_dropdown;
     public TMP_Dropdown Accessory2_dropdown;
+    public TMP_Dropdown Hair_dropdown;
 
     public void GetHairSelection(string OptionSelectedName)
     {
+        if (Accessory1_Selection != null && Accessory1_Selection.Contains("Hat"))
+        {
+            Accessory1_dropdown.value = 0;
+            Accessory1_Selection = "";
+
+            foreach (Transform child in HeadAccessory1Option.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+            foreach (Transform child in BodyAccessory1Options.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+
+        }
+
+        if (Accessory2_Selection != null && Accessory2_Selection.Contains("Hat"))
+        {
+            Accessory2_dropdown.value = 0;
+            Accessory2_Selection = "";
+
+            foreach (Transform child in HeadAccessory1Option.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+            foreach (Transform child in BodyAccessory1Options.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+
+        }
+
+
         foreach (Transform child in HairOptions.transform)
         {
             if (child.name == OptionSelectedName)
             {
                 child.gameObject.SetActive(true);
+                Hair_Selection = child.name;
                 Debug.Log("Found Hair!");
             }
             else
@@ -91,6 +127,19 @@ public class CustomizeHandler : MonoBehaviour
 
     public void GetAccessoryOneSelection(string OptionSelectedName)
     {
+        if (Hair_Selection != null)
+        {
+            if (OptionSelectedName.Contains("Hat"))
+            {
+                Hair_dropdown.value = 0;
+
+                foreach (Transform child in HairOptions.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+
         if (OptionSelectedName == Accessory2_Selection)
         {
             Accessory2_dropdown.value = 0;
@@ -104,6 +153,25 @@ public class CustomizeHandler : MonoBehaviour
                 child.gameObject.SetActive(false);
             }
         }
+
+        if (Accessory2_Selection != null)
+        {
+            if (OptionSelectedName.Contains("Hat") && Accessory2_Selection.Contains("Hat"))
+            {
+                Accessory2_dropdown.value = 0;
+
+                foreach (Transform child in HeadAccessory2Options.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
+                foreach (Transform child in BodyAccessory2Options.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
+
+            }
+        }
+       
 
         foreach (Transform child in HeadAccessory1Option.transform)
         {
@@ -143,6 +211,19 @@ public class CustomizeHandler : MonoBehaviour
 
     public void GetAccessoryTwoSelection(string OptionSelectedName)
     {
+        if (Hair_Selection != null)
+        {
+            if (OptionSelectedName.Contains("Hat"))
+            {
+                Hair_dropdown.value = 0;
+
+                foreach (Transform child in HairOptions.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+
         if (OptionSelectedName == Accessory1_Selection)
         {
             Accessory1_dropdown.value = 0;
@@ -156,6 +237,25 @@ public class CustomizeHandler : MonoBehaviour
                 child.gameObject.SetActive(false);
             }
         }
+
+        if (Accessory1_Selection != null)
+        {
+            if (OptionSelectedName.Contains("Hat") && Accessory1_Selection.Contains("Hat"))
+            {
+                Accessory1_dropdown.value = 0;
+
+                foreach (Transform child in HeadAccessory1Option.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
+                foreach (Transform child in BodyAccessory1Options.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
+
+            }
+        }
+       
 
         foreach (Transform child in HeadAccessory2Options.transform)
         {
