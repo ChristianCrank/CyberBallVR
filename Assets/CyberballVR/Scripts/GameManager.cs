@@ -172,14 +172,14 @@ public class GameManager : MonoBehaviour
             playerOutline = highestCatchPlayer.GetComponent<Outline>();
             playerOutline.enabled = true;
             playerOutline.OutlineWidth = 3f;
-            playerOutline.OutlineColor = Color.green;
+            playerOutline.OutlineColor = Color.blue;
         }
         else if(highestCatchPlayer != null && highestCatchPlayer.GetComponentInChildren<Outline>() != null && highestCatchCount == playerCatchCount)
         {
             playerOutline = highestCatchPlayer.GetComponentInChildren<Outline>();
             playerOutline.enabled = true;
             playerOutline.OutlineWidth = 5f;
-            playerOutline.OutlineColor = Color.green;
+            playerOutline.OutlineColor = Color.blue;
         }
     }
 }
