@@ -11,10 +11,12 @@ public class AI : MonoBehaviour
     GameObject ball;
     [SerializeField]
     GameObject target;
+    Quaternion targetRotation;
     public Transform ballSpawn;
 
     public float launchAngle;
-    
+    public float rotationSpeed = 5.0f;
+
     public int catchCount;
     public enum TargetingPreference
     {
@@ -36,45 +38,63 @@ public class AI : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag.Equals("Ball"))
+        if (other.tag.Equals("Ball"))
         {
-
             ball = other.gameObject;
-            ball.transform.position = ballSpawn.position;
-            ball.transform.SetParent(this.gameObject.transform);
-            GameManager.currentBallHolder = this.gameObject;
-            catchCount++;
-
-            EventManager.onAISuccessfulCatch?.Invoke();
-
-            Rigidbody rb = ball.GetComponent<Rigidbody>();
-            rb.isKinematic = true;
-
-            StartCoroutine(ThrowBall());
+            AICatch(ball);
         }
-            
     }
 
+    public void AICatch(GameObject b)
+    {
+        
+        Debug.Log("AI is ball parent");
+        ball = b;
+        ball.transform.position = ballSpawn.position;
+        ball.transform.SetParent(this.gameObject.transform);
+        GameManager.currentBallHolder = this.gameObject;
+        catchCount++;
+
+        EventManager.onAISuccessfulCatch?.Invoke();
+
+        Rigidbody rb = ball.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+
+        StartCoroutine(ThrowBall());
+    }
 
     private void FixedUpdate()
     {
+        
 
         if (GameManager.currentBallHolder != null)
         {
             // Look at the current ball holder if it's not this AI
             if (GameManager.currentBallHolder != this.gameObject)
             {
-                this.transform.LookAt(GameManager.currentBallHolder.transform);
+                targetRotation = Quaternion.LookRotation(GameManager.currentBallHolder.transform.position - this.transform.position);
+                this.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+                //Instand rotation:
+                //this.transform.LookAt(GameManager.currentBallHolder.transform);
             }
             else if (target != null) // If this AI has the ball and a target is set, look at the target
             {
-                this.transform.LookAt(target.transform);
+                targetRotation = Quaternion.LookRotation(target.transform.position - this.transform.position);
+                this.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+                //Instant rotation:
+                //this.transform.LookAt(target.transform);
             }
         }
         else
         {
             // Fallback: Look at a default, e.g., the first player in the list, if no ball holder is defined
-            this.transform.LookAt(gameManager.playerList[0].transform);
+            targetRotation = Quaternion.LookRotation(gameManager.playerList[0].transform.position - this.transform.position);
+            this.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            //Instant rotation:
+            //this.transform.LookAt(gameManager.playerList[0].transform);
         }
     }
 
@@ -89,47 +109,23 @@ public class AI : MonoBehaviour
         if (ball != null)
         {
             ball.transform.SetParent(null);
-
-
             BallManager.dropped = false;
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             rb.isKinematic = false;
             
 
             if(target != null)
-            {
+            { 
+
                 Vector3 startPos = ball.transform.position;
                 Vector3 targetPos = target.transform.position;
-
-                //// Calculate direction to target
-                //Vector3 direction = (targetPos - startPos).normalized;
-
-                //// Calculate distance to target
-                //float distance = Vector3.Distance(startPos, targetPos);
-
-                //// Calculate initial velocity magnitude for desired arc
-                //float initialVelocity = Mathf.Sqrt((distance * Physics.gravity.magnitude) / Mathf.Sin(2 * launchAngle * Mathf.Deg2Rad));
-
-                //// Calculate initial velocity vector
-                //Vector3 initialVelocityVector = direction * initialVelocity;
-
-                //// Apply initial velocity
-                //rb.velocity = initialVelocityVector;
-
-                //// Calculate additional upward force to achieve the desired arc
-                //float upwardForce = initialVelocity * Mathf.Sin(launchAngle * Mathf.Deg2Rad);
-
-
-                //// Apply additional upward force only once
-                //rb.AddForce(Vector3.up * upwardForce, ForceMode.VelocityChange);
-
+                
                 // Calculate the distance to the target in the horizontal plane
                 float distance = Vector3.Distance(new Vector3(startPos.x, 0, startPos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
                 // Calculate the difference in height between the start position and the target position
                 float yOffset = targetPos.y - startPos.y;
 
-                // Gravity force
                 float gravity = Physics.gravity.magnitude;
 
                 // Calculate initial velocity needed to achieve the desired launch angle
@@ -139,7 +135,17 @@ public class AI : MonoBehaviour
                 Vector3 velocity = new Vector3(targetPos.x - startPos.x, 0, targetPos.z - startPos.z).normalized * initialVelocity;
                 velocity.y = initialVelocity * Mathf.Sin(launchAngle * Mathf.Deg2Rad);
 
-                // Apply the velocity to the Rigidbody
+                // Introduce error to the throw
+                float errorMagnitude = 1f; //Change this to increase or decrease throw error
+                if (UnityEngine.Random.value < 0.2f) //Change the to increase or decrease percent chance of an error happening
+                {
+                    Vector3 error = new Vector3(UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
+                                                 UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
+                                                 UnityEngine.Random.Range(-errorMagnitude, errorMagnitude));
+
+                    velocity += error;
+                }
+
                 rb.velocity = velocity;
 
 

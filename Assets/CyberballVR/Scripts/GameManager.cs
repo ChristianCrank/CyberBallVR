@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
         {
             if (child.tag == "PlayerSpawn")
             {
-                Player.transform.position = child.transform.position + new Vector3(0, 0, 0.5f);
+                Player.transform.position = child.transform.position + new Vector3(0, 0, 0);
                 playerList.Add(Player);
             }
             else if (child.tag == "AISpawn")

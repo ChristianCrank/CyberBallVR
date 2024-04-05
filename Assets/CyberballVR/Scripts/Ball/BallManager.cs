@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -23,10 +24,27 @@ public class BallManager : MonoBehaviour
     {
         if(collision.gameObject.tag.Equals("Terrain"))
         {
-            Debug.Log("ball collided with terrain");
-            ball.transform.position = ballSpawn.position;
-            SetBallKinematic(true);
-            dropped = true;
+            //AI
+            if(GameManager.currentBallHolder != null && GameManager.currentBallHolder.GetComponent<AI>() != null)
+            {
+                Debug.Log("ball collided with terrain");
+                ballSpawn = GameManager.currentBallHolder.GetNamedChild("BallSpawn").transform;
+                ball.transform.position = ballSpawn.position;
+                //SetBallKinematic(true);
+                GameManager.currentBallHolder.GetComponent<AI>().AICatch(ball.gameObject);
+                dropped = true;
+                ball.GetComponent<BallEffects>().IncrementGrabCount();
+            }
+            //Player
+            else if(GameManager.currentBallHolder != null && GameManager.currentBallHolder.GetComponent<AI>() == null)
+            {
+                Debug.Log("ball collided with terrain");
+                ballSpawn = GameManager.currentBallHolder.GetNamedChild("BallSpawn").transform;
+                ball.transform.position = ballSpawn.position;
+                SetBallKinematic(true);
+                dropped = true;
+            }
+
         }
     }
 
