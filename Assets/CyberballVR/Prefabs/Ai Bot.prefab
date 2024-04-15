@@ -846,7 +846,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1469685900823271784}
   m_Layer: 0
-  m_Name: Male Red Vest
+  m_Name: Shirt 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1917,7 +1917,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6996019957914454876}
   m_Layer: 0
-  m_Name: Male Blue Vest
+  m_Name: Shirt 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3678,7 +3678,7 @@ GameObject:
   - component: {fileID: 2412773261506134234}
   - component: {fileID: 3199156008256128966}
   m_Layer: 0
-  m_Name: Female Black Vest
+  m_Name: Shirt 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5734,7 +5734,7 @@ GameObject:
   - component: {fileID: 1522416130482072705}
   - component: {fileID: 3089881197137283404}
   m_Layer: 0
-  m_Name: Female Pink Vest
+  m_Name: Shirt 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7138,6 +7138,7 @@ MonoBehaviour:
   target: {fileID: 0}
   ballSpawn: {fileID: 5431025290866639791}
   launchAngle: 35
+  rotationSpeed: 5
   catchCount: 0
   targetingPreference: 2
 --- !u!65 &7711225824740117770
@@ -10212,7 +10213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1609520855456679625}
   m_Layer: 0
-  m_Name: M/F Yellow Puffer
+  m_Name: Shirt 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

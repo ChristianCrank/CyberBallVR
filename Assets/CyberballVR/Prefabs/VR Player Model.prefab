@@ -4552,7 +4552,7 @@ GameObject:
   - component: {fileID: 2614993785489987853}
   - component: {fileID: 265331637014556103}
   m_Layer: 0
-  m_Name: Female Black Vest
+  m_Name: Shirt 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19051,7 +19051,7 @@ GameObject:
   - component: {fileID: 3307725112346007882}
   - component: {fileID: 5728731504418864207}
   m_Layer: 0
-  m_Name: Female Pink Vest
+  m_Name: Shirt 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23240,7 +23240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5611755097480030289}
   m_Layer: 0
-  m_Name: Male Blue Vest
+  m_Name: Shirt 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27485,7 +27485,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2597608365740023203}
   m_Layer: 0
-  m_Name: Male Red Vest
+  m_Name: Shirt 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28110,7 +28110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5448437884318250124}
   m_Layer: 0
-  m_Name: M/F Yellow Puffer
+  m_Name: Shirt 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
