@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
     public GameObject Player;
     public int playerCatchCount;
     public List<GameObject> playerList;
-
+    public Transform houseSpawn;
+    public GameObject playerMove;
     public static GameObject currentBallHolder;
     public GameObject highestCatchPlayer;
 
@@ -81,8 +82,9 @@ public class GameManager : MonoBehaviour
         {
             if (child.tag == "PlayerSpawn")
             {
-                Player.transform.position = child.transform.position + new Vector3(0, 0, 0);
+                Player.transform.position = houseSpawn.position;  //child.transform.position + new Vector3(0, 0, 0); //Player podium
                 playerList.Add(Player);
+                playerMove.SetActive(true);
             }
             else if (child.tag == "AISpawn")
             {
