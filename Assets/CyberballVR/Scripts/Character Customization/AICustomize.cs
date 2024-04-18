@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.RestService;
 using UnityEngine;
 
-public class RandomCustomize : MonoBehaviour
+public class AICustomize : MonoBehaviour
 {
+    public PlayerData playerData;
+
     public Material[] SkinColorOptions;
     public GameObject Body;
     public GameObject Head;
@@ -13,12 +16,6 @@ public class RandomCustomize : MonoBehaviour
     public GameObject ClothingOptions;
     public GameObject HeadAccessory1Option;
     public GameObject BodyAccessory2Options;
-
-
-    public void Awake()
-    {
-        RandomizeCustomization();
-    }
 
 
     public void RandomizeCustomization()
@@ -66,4 +63,36 @@ public class RandomCustomize : MonoBehaviour
             Head.GetComponent<Renderer>().material = SkinColorOptions[RandomSkinColor];
         }
     }
+
+    public void ReadInCustomization(PlayerData data)
+    {
+        playerData = data;
+
+        ClothingOptions.transform.Find(data.Clothing)?.gameObject.SetActive(true);
+        HeadAccessory1Option.transform.Find(data.Head_Accessory_1)?.gameObject.SetActive(true);
+        HairOptions.transform.Find(data.Hair)?.gameObject.SetActive(true);
+
+        Material skinMaterial = GetSkinMaterialByName(data.SkinColor);
+        if(skinMaterial != null && Body && Head)
+        {
+            Body.GetComponent<Renderer>().material = skinMaterial;
+            Head.GetComponent<Renderer>().material = skinMaterial;
+        }
+       
+    }
+
+    private Material GetSkinMaterialByName(string skinColorName)
+    {
+        foreach (var material in SkinColorOptions)
+        {
+            if (material.name == skinColorName)
+            {
+                return material;
+            }
+        }
+        Debug.LogWarning("No skin color material found for: " + skinColorName);
+        return null;
+    }
+
+
 }

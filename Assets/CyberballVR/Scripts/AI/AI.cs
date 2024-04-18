@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
+
+//Made by Christian
 public class AI : MonoBehaviour
 {
     GameManager gameManager;
@@ -75,7 +77,7 @@ public class AI : MonoBehaviour
                 targetRotation = Quaternion.LookRotation(GameManager.currentBallHolder.transform.position - this.transform.position);
                 this.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-                //Instand rotation:
+                //Instant rotation:
                 //this.transform.LookAt(GameManager.currentBallHolder.transform);
             }
             else if (target != null) // If this AI has the ball and a target is set, look at the target
@@ -100,11 +102,11 @@ public class AI : MonoBehaviour
 
     private IEnumerator ThrowBall()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
 
         target = ChooseThrowTarget();
         
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
 
         if (ball != null)
         {
@@ -165,7 +167,7 @@ public class AI : MonoBehaviour
 
     private GameObject ChooseThrowTarget()
     {
-        // Define a 90% chance threshold
+        
         float chanceThreshold = 0.8f; // 80%
         float roll = UnityEngine.Random.Range(0f, 1f); // Random roll between 0 and 1
 
@@ -219,6 +221,6 @@ public class AI : MonoBehaviour
                 break;
         }
 
-        return null; // Return null if no valid target is found or list is empty
+        return null; 
     }
 }

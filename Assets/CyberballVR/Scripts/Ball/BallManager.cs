@@ -4,19 +4,24 @@ using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
+//Made by Christian
 public class BallManager : MonoBehaviour
 {
     public Transform ballSpawn;
     public XRGrabInteractable ball;
     public static bool dropped;
+
     // Start is called before the first frame update
     void Start()
+    {
+        Debug.Log("script restarted");
+    }
+
+    public void SetupBall()
     {
         dropped = true;
         ball.transform.position = ballSpawn.position;
         SetBallKinematic(true);
-        Debug.Log("script restarted");
-
     }
 
     //Respawns ball in front of player if dropped on ground
