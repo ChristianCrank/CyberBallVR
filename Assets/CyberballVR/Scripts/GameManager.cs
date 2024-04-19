@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public BallManager ballManager;
     public GameObject currentLevel;
     public XRGrabInteractable ball;
-    public int currentLevelSelect;
+    [Range(-1, 2)] public int currentLevelSelect;
     public float spawnRadius;
 
     public GameObject AICharacter;
@@ -42,14 +42,17 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SpawnHumanPlayerInHouse();
-
-        if (ResearchData.AIPlayers != null || ResearchData.AIPlayers.Count != 0)
+        
+        if (ResearchData.AIPlayers != null && ResearchData.AIPlayers.Count != 0)
         {
             foreach (PlayerData playerData in ResearchData.AIPlayers)
             {
                 SetupAIPlayers(playerData);
             }
         }
+
+        if (ResearchData.AIPlayers == null) Debug.Log("ReaseaschData.AIPlayers is null");
+        Debug.Log(ResearchData.AIPlayers.Count);
        
     }
 
@@ -58,10 +61,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
+        Debug.Log("Starting Game");
         currentBallHolder = Player;
         playerCatchCount = 0;
 
-        if (ResearchData.AIPlayers != null || ResearchData.AIPlayers.Count != 0)
+        if (ResearchData.AIPlayers != null && ResearchData.AIPlayers.Count != 0)
         {
             SpawnAllPlayers();
         }
@@ -69,7 +73,8 @@ public class GameManager : MonoBehaviour
         {
             if (levelPrefabs != null)
             {
-                switch (currentLevelSelect)
+                Debug.Log("Level Prefabs is null");
+                /*switch (currentLevelSelect)
                 {
                     case 0:
                         currentLevel = levelPrefabs[0];
@@ -80,7 +85,8 @@ public class GameManager : MonoBehaviour
                     case 2:
                         currentLevel = levelPrefabs[2];
                         break;
-                }
+                }*/
+                if (currentLevelSelect != -1) currentLevel = levelPrefabs[currentLevelSelect];
 
                 SpawnPlayersNoData();
             }
@@ -101,6 +107,7 @@ public class GameManager : MonoBehaviour
 
     private void SetupAIPlayers(PlayerData data)
     {
+        Debug.Log("Setting Up AI Players");
         GameObject go = AICharacter;
         AICustomize customization = go.GetComponent<AICustomize>();
 
@@ -120,6 +127,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnHumanPlayerInHouse()
     {
+        Debug.Log("SpawnHumanPlayerInHouse");
         Player.transform.position = houseSpawn.position;
         playerMove.SetActive(true);
         playerList.Add(Player);
@@ -128,6 +136,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnHumanPlayerInField(Vector3 pos)
     {
+        Debug.Log("SpawnHumanPlayerInField");
         Player.transform.position = pos;
         playerMove.SetActive(false);
         Player.GetNamedChild("PlayerStand").SetActive(true);
@@ -136,7 +145,7 @@ public class GameManager : MonoBehaviour
     private void SpawnAllPlayers()
     {
         int playerCount = playerList.Count;
-
+        Debug.Log("SpawnAllPlayers with player count: " + playerCount);
         if (playerCount == 2)
         {
             // Spawn players straight across from each other
@@ -176,6 +185,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayersNoData()
     {
+        Debug.Log("SpawnPlayersNoData");
         Instantiate(currentLevel);
 
         foreach (Transform child in currentLevel.transform)
