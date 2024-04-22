@@ -201,6 +201,7 @@ public class GameManager : MonoBehaviour
                 GameObject go = Instantiate(AICharacter, child.transform.position + new Vector3(0, .75f, 0), Quaternion.identity);
                 ballManager.SetupBall();
                 playerList.Add(go);
+                go.SendMessage("RandomizeCustomization");
             }
 
         }

@@ -20,6 +20,7 @@ public class AICustomize : MonoBehaviour
 
     public void RandomizeCustomization()
     {
+        Debug.Log("RandomizeCustomization");
         int HairCount = HairOptions.transform.childCount;
         int ClothingCount = ClothingOptions.transform.childCount;
         int HeadAccessory1Count = HeadAccessory1Option.transform.childCount;
