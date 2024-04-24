@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.RestService;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class AICustomize : MonoBehaviour
 {
@@ -11,11 +13,13 @@ public class AICustomize : MonoBehaviour
     public GameObject Body;
     public GameObject Head;
 
+    public TextMeshProUGUI UIName;
+
     [Header("Empty GameObj Folders for Customization Option")]
     public GameObject HairOptions;
     public GameObject ClothingOptions;
     public GameObject HeadAccessory1Option;
-    public GameObject BodyAccessory2Options;
+    public GameObject HeadAccessory2Option;
 
 
     public void RandomizeCustomization()
@@ -69,26 +73,60 @@ public class AICustomize : MonoBehaviour
     {
         playerData = data;
 
-        ClothingOptions.transform.Find(data.Clothing)?.gameObject.SetActive(true);
-        HeadAccessory1Option.transform.Find(data.Head_Accessory_1)?.gameObject.SetActive(true);
-        HairOptions.transform.Find(data.Hair)?.gameObject.SetActive(true);
+        SetActiveOption(ClothingOptions.transform, data.Clothing);
+
+        bool hasHeadAccessory = SetActiveOption(HeadAccessory1Option.transform, data.Accessory_1);
+        // If there is a head accessory, does not activate hair. Otherwise, activates hair.
+        if (!hasHeadAccessory)
+        {
+            SetActiveOption(HairOptions.transform, data.Hair);
+        }
+        SetActiveOption(HeadAccessory2Option.transform, data.Accessory_2);
 
         Material skinMaterial = GetSkinMaterialByName(data.SkinColor);
-        if(skinMaterial != null && Body && Head)
+        if (skinMaterial != null && Body && Head)
         {
             Body.GetComponent<Renderer>().material = skinMaterial;
             Head.GetComponent<Renderer>().material = skinMaterial;
         }
-       
+
+        UIName.text += data.Name;
+        
+    }
+
+    private bool SetActiveOption(Transform optionsParent, string optionName)
+    {
+
+        foreach (Transform child in optionsParent)
+        {
+            child.gameObject.SetActive(false);
+        }
+
+        if (!optionName.Equals("None"))
+        {
+            Transform foundOption = optionsParent.Find(optionName);
+            if (foundOption)
+            {
+                foundOption.gameObject.SetActive(true);
+                return true; 
+            }
+        }
+
+        return false; 
     }
 
     private Material GetSkinMaterialByName(string skinColorName)
     {
         foreach (var material in SkinColorOptions)
         {
+
             if (material.name == skinColorName)
             {
                 return material;
+            }
+            else if(skinColorName.Equals("Gray"))
+            {
+                return SkinColorOptions[0];
             }
         }
         Debug.LogWarning("No skin color material found for: " + skinColorName);

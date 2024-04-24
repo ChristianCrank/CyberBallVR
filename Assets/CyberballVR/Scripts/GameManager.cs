@@ -15,16 +15,20 @@ public class GameManager : MonoBehaviour
     public XRGrabInteractable ball;
     [Range(-1, 2)] public int currentLevelSelect;
     public float spawnRadius;
+    public Transform AllSpawnPosition;
 
     public GameObject AICharacter;
     public GameObject Player;
+    private CharacterController characterController;
     public int playerCatchCount;
     public List<GameObject> playerList;
     public Transform houseSpawn;
     public GameObject playerMove;
+    public GameObject[] handRays;
     public static GameObject currentBallHolder;
     public GameObject highestCatchPlayer;
     public GameObject lowestCatchPlayer;
+
 
     Outline playerOutline;
 
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        characterController = Player.GetComponentInChildren<CharacterController>();
         SpawnHumanPlayerInHouse();
         
         if (ResearchData.AIPlayers != null && ResearchData.AIPlayers.Count != 0)
@@ -74,18 +79,7 @@ public class GameManager : MonoBehaviour
             if (levelPrefabs != null)
             {
                 Debug.Log("Level Prefabs is null");
-                /*switch (currentLevelSelect)
-                {
-                    case 0:
-                        currentLevel = levelPrefabs[0];
-                        break;
-                    case 1:
-                        currentLevel = levelPrefabs[1];
-                        break;
-                    case 2:
-                        currentLevel = levelPrefabs[2];
-                        break;
-                }*/
+          
                 if (currentLevelSelect != -1) currentLevel = levelPrefabs[currentLevelSelect];
 
                 SpawnPlayersNoData();
@@ -108,8 +102,11 @@ public class GameManager : MonoBehaviour
     private void SetupAIPlayers(PlayerData data)
     {
         Debug.Log("Setting Up AI Players");
-        GameObject go = AICharacter;
-        AICustomize customization = go.GetComponent<AICustomize>();
+        GameObject aiPlayerInstance = Instantiate(AICharacter);
+
+        aiPlayerInstance.SetActive(false);
+
+        AICustomize customization = aiPlayerInstance.GetComponent<AICustomize>();
 
         if(data != null)
         {
@@ -121,7 +118,7 @@ public class GameManager : MonoBehaviour
             customization.RandomizeCustomization();
         }
 
-        playerList.Add(go);
+        playerList.Add(aiPlayerInstance);
 
     }
 
@@ -131,58 +128,79 @@ public class GameManager : MonoBehaviour
         Player.transform.position = houseSpawn.position;
         playerMove.SetActive(true);
         playerList.Add(Player);
-        Player.GetNamedChild("PlayerStand").SetActive(false);
+        Player.transform.Find("PlayerStand").gameObject.SetActive(false);
     }
 
-    private void SpawnHumanPlayerInField(Vector3 pos)
+    private void SpawnHumanPlayerInField(Vector3 pos, Quaternion rot)
     {
         Debug.Log("SpawnHumanPlayerInField");
         Player.transform.position = pos;
+        characterController.transform.position = pos;
+        Player.transform.rotation = rot;
+        characterController.transform.rotation = rot;
         playerMove.SetActive(false);
-        Player.GetNamedChild("PlayerStand").SetActive(true);
+        foreach(GameObject hr in handRays)
+        {
+            hr.gameObject.SetActive(false);
+        }
+        Player.transform.Find("PlayerStand").gameObject.SetActive(true);   //.GetNamedChild("PlayerStand").SetActive(true);
+        StartCoroutine(SetupBallGM());
+    }
+   
+    public void DisableHandRays()
+    {
+        foreach (GameObject hr in handRays)
+        {
+            hr.gameObject.SetActive(false);
+        }
+    }
+
+    IEnumerator SetupBallGM()
+    {
+        yield return new WaitForSeconds(1f);
         ballManager.SetupBall();
     }
+
     private void SpawnAllPlayers()
     {
         int playerCount = playerList.Count;
         Debug.Log("SpawnAllPlayers with player count: " + playerCount);
-        if (playerCount == 2)
-        {
-            // Spawn players straight across from each other
-            SpawnHumanPlayerInField(new Vector3(spawnRadius, 0, 0));
-            Instantiate(playerList[1], new Vector3(-spawnRadius, 0.75f, 0), Quaternion.identity);
-        }
-        else if (playerCount > 2)
-        {
-            SpawnHumanPlayerInField(new Vector3(spawnRadius, 0, 0));
-            for (int i = 0; i < playerCount; i++)
-            {
-                float angle = i * Mathf.PI * 2f / playerCount;
-                Vector3 spawnPosition = new Vector3(Mathf.Cos(angle) * spawnRadius, 0, Mathf.Sin(angle) * spawnRadius);
-                Quaternion spawnRotation = Quaternion.Euler(0, -angle * Mathf.Rad2Deg + 90, 0); // Orient towards center
 
-                if (i == 0)
-                {
-                    SpawnHumanPlayerInField(spawnPosition);
-                }
-                else
-                    Instantiate(playerList[i], spawnPosition, spawnRotation);
+        // Loop to instantiate and place all AI players
+        for (int i = 0; i < playerCount; i++)
+        {
+            float angle = i * Mathf.PI * 2f / playerCount;
+            Vector3 spawnPosition = AllSpawnPosition.position + new Vector3(Mathf.Cos(angle) * spawnRadius, 0, Mathf.Sin(angle) * spawnRadius);
+            
+            
+            //Quaternion spawnRotation = Quaternion.Euler(0, -angle * Mathf.Rad2Deg + 90, 0); // Orient towards center
+            Quaternion spawnRotation;
+            if (i == 0) 
+            {
+                spawnRotation = Quaternion.Euler(0, -angle * Mathf.Rad2Deg - 90, 0);
+            }
+            else
+            {
+                spawnRotation = Quaternion.Euler(0, -angle * Mathf.Rad2Deg + 90, 0);
+            }
+            if (i == 0)
+            {
+                // handling for human player
+                SpawnHumanPlayerInField(spawnPosition, spawnRotation);
+            }
+            else
+            {
+                //Spawns the AI players 
+                GameObject aiPlayerInstance = playerList[i];
+                aiPlayerInstance.transform.position = spawnPosition + new Vector3(0, .75f, 0);
+                aiPlayerInstance.transform.rotation = spawnRotation;
+                aiPlayerInstance.SetActive(true);
             }
         }
 
-        foreach (GameObject go in playerList)
-        {
-            if (go.GetComponent<Outline>() != null)
-            {
-                go.GetComponent<Outline>().enabled = false;
-            }
-            else if (go.GetComponentInChildren<Outline>() != null)
-            {
-                go.GetComponentInChildren<Outline>().enabled = false;
-            }
-        }
+        DisableOutlines();
+
     }
-
     private void SpawnPlayersNoData()
     {
         Debug.Log("SpawnPlayersNoData");
@@ -192,9 +210,13 @@ public class GameManager : MonoBehaviour
         {
             if (child.tag == "PlayerSpawn")
             {
-                Player.transform.position = child.transform.position + new Vector3(0, 0, 0); //Player podium
+                Debug.Log("player spawned with no data");
+                //characterController.transform.position = child.transform.position + new Vector3(0, 0, 0); //Player podium
+                Player.transform.position = child.transform.position + new Vector3(0, 0, 0);
                 playerList.Add(Player);
-                playerMove.SetActive(true);
+                playerMove.SetActive(false);
+                Player.transform.Find("PlayerStand").gameObject.SetActive(true);
+
             }
             else if (child.tag == "AISpawn")
             {
@@ -206,6 +228,12 @@ public class GameManager : MonoBehaviour
 
         }
 
+        DisableOutlines();
+        
+    }
+
+    private void DisableOutlines()
+    {
         foreach (GameObject go in playerList)
         {
             if (go.GetComponent<Outline>() != null)
@@ -230,12 +258,27 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public int TrackAllCatches()
+    {
+        int count = 0;
+        foreach(GameObject go in playerList) 
+        {
+            if(go != Player)
+            {
+                count += go.GetComponent<AI>().catchCount;
+            }
+        }
+
+        count += playerCatchCount;
+
+        return count;
+    }
     public void ChangePlayerOutline()
     {
         int highestCatchCount = 0;
-        int lowestCatchCount = 1;
-        highestCatchPlayer = null; // This will hold the reference to the player/AI with the highest catchCount
-        lowestCatchPlayer = null; // This will hold the reference to the player/AI with the lowest catchCount
+        int lowestCatchCount = int.MaxValue;
+        highestCatchPlayer = null; 
+        lowestCatchPlayer = null; 
 
         foreach (GameObject go in playerList)
         {
@@ -252,91 +295,49 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < playerList.Count; i++)
+        foreach (GameObject go in playerList)
         {
-            if (playerList[i] != null)
+            AI aiComponent = go.GetComponent<AI>();
+
+            //int catchCount = aiComponent != null ? aiComponent.catchCount : playerCatchCount;
+            int catchCount = (go == Player) ? playerCatchCount : go.GetComponent<AI>().catchCount;
+
+            if (catchCount > highestCatchCount)
             {
-                AI aiComponent = playerList[i].GetComponent<AI>();
+                highestCatchCount = catchCount;
+                highestCatchPlayer = go;
+            }
 
-                if (aiComponent != null)
-                {
-                    // Update tempCatch if the current AI's catchCount is greater
-                    if (aiComponent.catchCount > highestCatchCount)
-                    {
-                        highestCatchCount = aiComponent.catchCount;
-                        highestCatchPlayer = playerList[i];
-                    }
-
-                    if(aiComponent.catchCount < lowestCatchCount)
-                    {
-                        lowestCatchCount = aiComponent.catchCount;
-                        lowestCatchPlayer = playerList[i];
-                    }
-
-                }
-                else
-                {
-                    if (playerCatchCount > highestCatchCount)
-                    {
-                        highestCatchCount = playerCatchCount;
-                        highestCatchPlayer = playerList[i];
-                    }
-
-                    if(playerCatchCount < lowestCatchCount)
-                    {
-                        lowestCatchCount= playerCatchCount;
-                        lowestCatchPlayer = playerList[i];
-                    }
-                }
-         
+            if (catchCount < lowestCatchCount)
+            {
+                lowestCatchCount = catchCount;
+                lowestCatchPlayer = go;
             }
         }
 
-        if (highestCatchPlayer != null && highestCatchPlayer.GetComponent<Outline>() != null && highestCatchCount != playerCatchCount)
-            CatchOutline(false, true);
-        else if(highestCatchPlayer != null && highestCatchPlayer.GetComponentInChildren<Outline>() != null && highestCatchCount == playerCatchCount)
-            CatchOutline(true, true);
-        if(lowestCatchPlayer != null && lowestCatchPlayer.GetComponent<Outline>() != null && lowestCatchCount != playerCatchCount)
-            CatchOutline(false, false);
-        else if (lowestCatchPlayer != null && lowestCatchPlayer.GetComponentInChildren<Outline>() != null && lowestCatchCount == playerCatchCount)
-            CatchOutline(true, false);
-
+        ApplyOutline(highestCatchPlayer, Color.blue);
+        if (highestCatchPlayer != lowestCatchPlayer)
+        {
+            ApplyOutline(lowestCatchPlayer, Color.red);
+        }
     }
 
-    /// <summary>
-    /// If p is true, outlines player
-    /// If p is false, outlines AI
-    /// If c is true, outlines blue
-    /// If c is false, outlines red
-    /// </summary>
-    /// <param name="p"></param>
-    void CatchOutline(bool p, bool c)
+    private void ApplyOutline(GameObject player, Color color)
     {
-        if(p)
+        if (player != null)
         {
-            playerOutline = highestCatchPlayer.GetComponentInChildren<Outline>();
-            playerOutline.enabled = true;
-            playerOutline.OutlineWidth = 5f;
-
-            if(c)
-                playerOutline.OutlineColor = Color.blue;
-            else 
-                playerOutline.OutlineColor = Color.red;
-        }
-        else
-        {
-            playerOutline = highestCatchPlayer.GetComponent<Outline>();
-            playerOutline.enabled = true;
-            playerOutline.OutlineWidth = 3f;
-
-            if(c)
-                playerOutline.OutlineColor = Color.blue;
-            else 
-                playerOutline.OutlineColor = Color.red;
+            Outline outline = player.GetComponent<Outline>() ?? player.GetComponentInChildren<Outline>();
+            if (outline != null)
+            {
+                Debug.Log("outline parent " + outline.gameObject.name);
+                outline.enabled = true;
+                outline.OutlineColor = color;
+                outline.OutlineWidth = player == Player ? 5f : 2f; // Wider outline for the human player
+            }
         }
     }
 
-    
+
 }
     
 

@@ -75,7 +75,7 @@ public class BallEffects : MonoBehaviour
             else if (grabCount >= fxChangeInterval * 2 && grabCount < fxChangeInterval * 3)
             {
                 main.startColor = Color.green;
-                ballOutline.OutlineColor = Color.green;
+                ballOutline.OutlineColor = Color.cyan;
             }
             else if (grabCount >= fxChangeInterval * 3 && grabCount < fxChangeInterval * 4)
             {

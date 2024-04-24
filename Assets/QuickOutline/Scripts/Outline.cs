@@ -103,8 +103,12 @@ public class Outline : MonoBehaviour {
     void OnEnable() {
     foreach (var renderer in renderers) {
 
-      // Append outline shaders
-      var materials = renderer.sharedMaterials.ToList();
+        if (renderer.gameObject.name == "PlayerStand")
+        {
+            continue; // Skip the rest of the loop for this particular renderer
+        }
+        // Append outline shaders
+        var materials = renderer.sharedMaterials.ToList();
 
       materials.Add(outlineMaskMaterial);
       materials.Add(outlineFillMaterial);
