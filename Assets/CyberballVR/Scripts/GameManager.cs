@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     public GameObject highestCatchPlayer;
     public GameObject lowestCatchPlayer;
 
+    public FadeToBlack fadeScript;
+
 
     Outline playerOutline;
 
@@ -120,6 +122,17 @@ public class GameManager : MonoBehaviour
 
         playerList.Add(aiPlayerInstance);
 
+    }
+
+    public IEnumerable returnPlayerToHouse() //called from the ThrowBall() in AI.cs
+    {
+        Debug.Log("ReturnedPlayerToHouse");
+        fadeScript.fadeToBlack("Lobby Closing...", 3f);
+        yield return new WaitForSeconds(3f);
+        Player.transform.position = houseSpawn.position;
+        playerMove.SetActive(true);
+        //playerList.Add(Player); Just disabled this on a hunch
+        Player.transform.Find("PlayerStand").gameObject.SetActive(false);
     }
 
     private void SpawnHumanPlayerInHouse()

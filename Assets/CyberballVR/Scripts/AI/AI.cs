@@ -172,7 +172,10 @@ public class AI : MonoBehaviour
                 ball = null;
             }
         }
-            
+        else
+        {
+            gameManager.StartCoroutine("returnPlayerToHouse"); //starts a coroutine in the Game Manager that sends the player home 
+        }
     }
     // Helper method to calculate the launch velocity based on distance, height difference, gravity, and launch angle
     float CalculateLaunchVelocity(float distance, float yOffset, float gravity, float launchAngle)

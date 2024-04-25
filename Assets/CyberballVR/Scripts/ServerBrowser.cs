@@ -1,6 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 public class ServerBrowser : MonoBehaviour
 {
@@ -11,11 +12,7 @@ public class ServerBrowser : MonoBehaviour
     public GameObject foundLobby;
     public GameObject cancelButton;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public FadeToBlack fadeScript;
 
     public void StartButton()
     {
@@ -25,6 +22,7 @@ public class ServerBrowser : MonoBehaviour
     public void CancelButton()
     {
         StopCoroutine(start());
+        fadeScript.cancel();
         currentLevel--;
     }
 
@@ -35,9 +33,13 @@ public class ServerBrowser : MonoBehaviour
         findingLobby.SetActive(true);
         cancelButton.SetActive(true);
         yield return new WaitForSeconds(Random.Range(2, 5));
+
         findingLobby.SetActive(false);
         foundLobby.SetActive(true);
-        yield return new WaitForSeconds(Random.Range(1, 3));
+        int wait = Random.Range(4, 10);
+        fadeScript.fadeToBlack("Joining Lobby", wait);
+        yield return new WaitForSeconds(wait);
+
         gameManager.StartGame();
         foundLobby.SetActive(false);
         cancelButton.SetActive(false);
