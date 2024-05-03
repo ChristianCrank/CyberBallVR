@@ -68,7 +68,16 @@ public class AI : MonoBehaviour
         ResearchData.catchList.Add(" to " + name);
         ResearchData.throwList.Add(name + " threw the ball");
 
-        StartCoroutine(ThrowBall());
+        if (gameManager.TrackAllCatches() < ResearchData.LevelData.NoOfThrows)
+        {
+            StartCoroutine(ThrowBall());
+
+        }
+        else
+        {
+            ResearchData.saveLog();
+            gameManager.StartCoroutine("returnPlayerToHouse"); //starts a coroutine in the Game Manager that sends the player home 
+        }
     }
 
     private void FixedUpdate()
@@ -109,94 +118,84 @@ public class AI : MonoBehaviour
     private IEnumerator ThrowBall()
     {
 
+        yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
+
+        target = ChooseThrowTarget();
+
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f));
+
         if (ResearchData.AIPlayers != null && ResearchData.AIPlayers.Count != 0)
         {
-            if (gameManager.TrackAllCatches() < ResearchData.LevelData.NoOfThrows)
+
+            if (ball != null)
             {
-                yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
+                ball.transform.SetParent(null);
+                BallManager.dropped = false;
+                Rigidbody rb = ball.GetComponent<Rigidbody>();
+                rb.isKinematic = false;
 
-                target = ChooseThrowTarget();
+                float speedMultiplier = GetCurrentThrowSpeed();
 
-                yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+                if (speedMultiplier <= .5)
+                    launchAngle = 75f;
+                else if (speedMultiplier > .5 && speedMultiplier <= .75)
+                    launchAngle = 55f;
+                else if (speedMultiplier > .75 && speedMultiplier <= 1)
+                    launchAngle = 25f;
+                else if (speedMultiplier > 1 && speedMultiplier <= 1.25)
+                        launchAngle = 10f;
+                else
+                        launchAngle = 2f;
 
-                if (ball != null)
+
+
+                if (target != null)
                 {
-                    ball.transform.SetParent(null);
-                    BallManager.dropped = false;
-                    Rigidbody rb = ball.GetComponent<Rigidbody>();
-                    rb.isKinematic = false;
 
-                    float speedMultiplier = GetCurrentThrowSpeed();
+                    Vector3 startPos = ball.transform.position;
+                    Vector3 targetPos = target.transform.position;
 
-                    if (speedMultiplier <= .5)
-                        launchAngle = 40f;
-                    else if (speedMultiplier > .5 && speedMultiplier <= 1)
-                        launchAngle = 30f;
-                    else if (speedMultiplier > 1 && speedMultiplier <= 1.5)
-                        launchAngle = 20f;
-                    else if (speedMultiplier > 1.5 && speedMultiplier <= 2)
-                        launchAngle = 5f;
-                    else
-                        launchAngle = 0f;
+                    // Calculate the distance to the target in the horizontal plane
+                    float distance = Vector3.Distance(new Vector3(startPos.x, 0, startPos.z), new Vector3(targetPos.x, 0, targetPos.z));
+
+                    // Calculate the difference in height between the start position and the target position
+                    float yOffset = targetPos.y - startPos.y;
+
+                    float gravity = Physics.gravity.magnitude;
+
+                    // Calculate initial velocity needed to achieve the desired launch angle
+                    float initialVelocity = CalculateLaunchVelocity(distance, yOffset, gravity, launchAngle);
 
 
+                    initialVelocity *= speedMultiplier;
 
-                    if (target != null)
+
+                    // Calculate velocity components
+                    Vector3 velocity = new Vector3(targetPos.x - startPos.x, 0, targetPos.z - startPos.z).normalized * initialVelocity;
+                    velocity.y = initialVelocity * Mathf.Sin(launchAngle * Mathf.Deg2Rad);
+
+                    // Introduce error to the throw
+                    float errorMagnitude = 1f; //Change this to increase or decrease throw error
+                    if (UnityEngine.Random.value < 0.15f) //Change the to increase or decrease percent chance of an error happening
                     {
+                        Vector3 error = new Vector3(UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
+                                                        UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
+                                                        UnityEngine.Random.Range(-errorMagnitude, errorMagnitude));
 
-                        Vector3 startPos = ball.transform.position;
-                        Vector3 targetPos = target.transform.position;
-
-                        // Calculate the distance to the target in the horizontal plane
-                        float distance = Vector3.Distance(new Vector3(startPos.x, 0, startPos.z), new Vector3(targetPos.x, 0, targetPos.z));
-
-                        // Calculate the difference in height between the start position and the target position
-                        float yOffset = targetPos.y - startPos.y;
-
-                        float gravity = Physics.gravity.magnitude;
-
-                        // Calculate initial velocity needed to achieve the desired launch angle
-                        float initialVelocity = CalculateLaunchVelocity(distance, yOffset, gravity, launchAngle);
-
-
-                        initialVelocity *= speedMultiplier;
-
-
-                        // Calculate velocity components
-                        Vector3 velocity = new Vector3(targetPos.x - startPos.x, 0, targetPos.z - startPos.z).normalized * initialVelocity;
-                        velocity.y = initialVelocity * Mathf.Sin(launchAngle * Mathf.Deg2Rad);
-
-                        // Introduce error to the throw
-                        float errorMagnitude = 1f; //Change this to increase or decrease throw error
-                        if (UnityEngine.Random.value < 0.15f) //Change the to increase or decrease percent chance of an error happening
-                        {
-                            Vector3 error = new Vector3(UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
-                                                         UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
-                                                         UnityEngine.Random.Range(-errorMagnitude, errorMagnitude));
-
-                            velocity += error;
-                        }
-
-                        rb.velocity = velocity;
-
-
+                        velocity += error;
                     }
 
-                    ball = null;
+                    rb.velocity = velocity;
+
+
                 }
+
+                ball = null;
             }
-            else
-            {
-                gameManager.StartCoroutine("returnPlayerToHouse"); //starts a coroutine in the Game Manager that sends the player home 
-            }
+            
         }
         else
         {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
-
-            target = ChooseThrowTarget();
-
-            yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
 
             if (ball != null)
             {
