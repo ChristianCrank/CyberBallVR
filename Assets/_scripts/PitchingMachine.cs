@@ -21,6 +21,8 @@ public class PitchingMachine : MonoBehaviour
 
     private int currentPitch;
 
+    public Transform startingTransform;
+
     [Serializable]
     private class PitchingInstructions
     {
@@ -41,11 +43,14 @@ public class PitchingMachine : MonoBehaviour
     private void OnEnable()
     {
         EventManager.onTogglePitch += togglePitch;
+        rotating = false;
+
     }
 
     private void OnDisable()
     {
-        EventManager.onTogglePitch -= togglePitch;
+        //EventManager.onTogglePitch -= togglePitch;
+        //StopCoroutine(SetAim());
     }
 
     private void Start()
@@ -56,13 +61,18 @@ public class PitchingMachine : MonoBehaviour
         emptyRotator.position = transform.position;
         emptyRotator.rotation = transform.rotation;
         passedTime = 0f;
+
+       //enableTransform = transform;
     }
 
     void togglePitch(bool b)
     {
         isPitching = b;
-        //Log("Toggling to: " + isPitching);
+        //rotating = false;
+        transform.position = startingTransform.position;
+        transform.rotation = startingTransform.rotation;
         if (isPitching) StartCoroutine(SetAim());
+        //transform.position = emptyRotator.position;
     }
 
     /*void pitchOnce()
@@ -72,14 +82,12 @@ public class PitchingMachine : MonoBehaviour
 
     IEnumerator SetAim()
     {
-        //Debug.Log("Setting Aim");
         float rotation = pitches[currentPitch].rotation;
         emptyRotator.Rotate(rotation, 0f, 0f);
         rotateTo = emptyRotator.rotation;
         rotating = true;
         yield return new WaitForSeconds(timeToTurn); //wait till at angle
         rotating = false;
-       
         Pitch(); //pitch
 
         //Debug.Log("Resetting Aim");
@@ -89,7 +97,7 @@ public class PitchingMachine : MonoBehaviour
         yield return new WaitForSeconds(timeToTurn); //wait till at angle
         rotating = false;
         currentPitch = (currentPitch + 1) % pitches.Length;
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2);
         if (isPitching) StartCoroutine(SetAim());
     }
 

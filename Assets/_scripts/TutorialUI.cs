@@ -7,6 +7,7 @@ public class TutorialUI : MonoBehaviour
     [SerializeField] GameObject specialButton;
     private int specialBtnClickCount;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +20,7 @@ public class TutorialUI : MonoBehaviour
 
     }
 
-    public void disableSpecial()
+    /*public void disableSpecial()
     {
         specialBtnClickCount++;
         if(specialBtnClickCount == 3) specialButton.SetActive(false);
@@ -30,5 +31,5 @@ public class TutorialUI : MonoBehaviour
     {
         specialBtnClickCount = 0;
         specialButton.SetActive(true);
-    }
+    }*/
 }
