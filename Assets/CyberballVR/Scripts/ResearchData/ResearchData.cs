@@ -9,6 +9,8 @@ using static UnityEditor.Recorder.OutputPath;
 public class ResearchData : MonoBehaviour
 {
     public static List<PlayerData> AIPlayers;
+    public static List<string> throwList = new List<string>();
+    public static List<string> catchList = new List<string>();
 
     [SerializeField]
     public static LevelData LevelData { get; private set; }
@@ -16,6 +18,7 @@ public class ResearchData : MonoBehaviour
     {
         AIPlayers = LoadAllPlayers();
         LevelData = LoadLevelData();
+        throwList.Add("The player threw the ball");
     }
 
 
@@ -138,7 +141,18 @@ public class ResearchData : MonoBehaviour
         Debug.Log("Speed size " + levelData.Speeds.Count);
         return levelData;
     }
-    
+
+
+    public static void saveLog()
+    {
+        StreamWriter sw = File.CreateText(Application.persistentDataPath + "\\Log.txt");
+        for(int i = 0; i < catchList.Count; i++)
+        {
+            sw.WriteLine(throwList[i] + catchList[i]);
+        }
+
+        sw.Close();
+    }
 }
 
 public class PlayerData

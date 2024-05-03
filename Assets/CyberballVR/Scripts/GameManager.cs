@@ -267,6 +267,9 @@ public class GameManager : MonoBehaviour
         {
             playerCatchCount++;
             ChangePlayerOutline();
+            Debug.Log("This Counts");
+            ResearchData.catchList.Add(" to the player");
+            ResearchData.throwList.Add("The player threw the ball");
         }
         
     }

@@ -63,6 +63,10 @@ public class AI : MonoBehaviour
         Rigidbody rb = ball.GetComponent<Rigidbody>();
         rb.isKinematic = true;
 
+        string name = transform.GetComponent<AICustomize>().UIName.text;
+        ResearchData.catchList.Add(" to " + name);
+        ResearchData.throwList.Add(name + " threw the ball");
+
         StartCoroutine(ThrowBall());
     }
 
@@ -174,6 +178,7 @@ public class AI : MonoBehaviour
         }
         else
         {
+            ResearchData.saveLog();
             gameManager.StartCoroutine("returnPlayerToHouse"); //starts a coroutine in the Game Manager that sends the player home 
         }
     }
