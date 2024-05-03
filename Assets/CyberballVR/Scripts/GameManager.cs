@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public IEnumerable returnPlayerToHouse() //called from the ThrowBall() in AI.cs
+    public IEnumerator returnPlayerToHouse() //called from the ThrowBall() in AI.cs
     {
         Debug.Log("ReturnedPlayerToHouse");
         fadeScript.fadeToBlack("Lobby Closing...", 3f);
@@ -134,6 +134,12 @@ public class GameManager : MonoBehaviour
         playerMove.SetActive(true);
         //playerList.Add(Player); Just disabled this on a hunch
         Player.transform.Find("PlayerStand").gameObject.SetActive(false);
+        DisableHandRays(true);
+        for (int i = 1; i < playerList.Count; i++)
+        {
+            playerList[i].GetComponent<AI>().catchCount = 0;
+            playerList[i].SetActive(false);
+        }
     }
 
     private void SpawnHumanPlayerInHouse()
@@ -162,19 +168,16 @@ public class GameManager : MonoBehaviour
         Player.transform.rotation = rot;
         characterController.transform.rotation = rot;
         playerMove.SetActive(false);
-        foreach(GameObject hr in handRays)
-        {
-            hr.gameObject.SetActive(false);
-        }
+        DisableHandRays(false);
         Player.transform.Find("PlayerStand").gameObject.SetActive(true);   //.GetNamedChild("PlayerStand").SetActive(true);
         StartCoroutine(SetupBallGM());
     }
    
-    public void DisableHandRays()
+    public void DisableHandRays(bool flag)
     {
         foreach (GameObject hr in handRays)
         {
-            hr.gameObject.SetActive(false);
+            hr.gameObject.SetActive(flag);
         }
     }
 

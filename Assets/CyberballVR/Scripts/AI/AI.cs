@@ -51,23 +51,24 @@ public class AI : MonoBehaviour
 
     public void AICatch(GameObject b)
     {
-        
+        if (GameManager.currentBallHolder != gameObject)
+        {
+            string name = transform.GetComponent<AICustomize>().UIName.text;
+            ResearchData.catchList.Add(" to " + name);
+            ResearchData.throwList.Add(name + " threw the ball");
+            catchCount++;
+        }
+
         Debug.Log("AI is ball parent");
         ball = b;
         ball.transform.position = ballSpawn.position;
         ball.transform.SetParent(this.gameObject.transform);
         GameManager.currentBallHolder = this.gameObject;
-        catchCount++;
 
         EventManager.onAISuccessfulCatch?.Invoke();
 
         Rigidbody rb = ball.GetComponent<Rigidbody>();
         rb.isKinematic = true;
-
-        string name = transform.GetComponent<AICustomize>().UIName.text;
-        ResearchData.catchList.Add(" to " + name);
-        ResearchData.throwList.Add(name + " threw the ball");
-
         
         StartCoroutine(ThrowBall());
 

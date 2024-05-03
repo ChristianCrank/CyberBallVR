@@ -148,10 +148,11 @@ public class ResearchData : MonoBehaviour
 
     public static void saveLog()
     {
-        StreamWriter sw = File.CreateText(Application.persistentDataPath + "\\Log.txt");
+        string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm-ss.fff");
+        StreamWriter sw = File.CreateText(Application.persistentDataPath + "\\Log - " + timestamp + ".txt");
         for(int i = 0; i < catchList.Count; i++)
         {
-            sw.WriteLine(throwList[i] + catchList[i]);
+            sw.WriteLine(i + ": " + throwList[i] + catchList[i]);
         }
 
         sw.Close();
