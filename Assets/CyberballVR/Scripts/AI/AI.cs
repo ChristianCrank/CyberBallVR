@@ -36,6 +36,7 @@ public class AI : MonoBehaviour
         catchCount = 0;
         
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        Debug.Log("RD " + ResearchData.isLevelDataLoaded);
     }
 
 
@@ -103,33 +104,40 @@ public class AI : MonoBehaviour
 
     private IEnumerator ThrowBall()
     {
-        
-        if(gameManager.TrackAllCatches() < ResearchData.LevelData.NoOfThrows)
+
+        if (ResearchData.AIPlayers != null && ResearchData.AIPlayers.Count != 0)
         {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
-
-            target = ChooseThrowTarget();
-            float speedMultiplier = GetCurrentThrowSpeed();
-
-            yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
-
-            if (ball != null)
+            if (gameManager.TrackAllCatches() < ResearchData.LevelData.NoOfThrows)
             {
-                ball.transform.SetParent(null);
-                BallManager.dropped = false;
-                Rigidbody rb = ball.GetComponent<Rigidbody>();
-                rb.isKinematic = false;
+                yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
 
-                if (speedMultiplier < 1)
-                    launchAngle = 35f;
-                else if (speedMultiplier >= 1 && speedMultiplier <= 2)
-                    launchAngle = 25f;
-                else if (speedMultiplier > 2 && speedMultiplier <= 3)
-                    launchAngle = 15f;
-                else
-                    launchAngle = 0f;
+                target = ChooseThrowTarget();
 
-                if (target != null)
+                yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+
+                if (ball != null)
+                {
+                    ball.transform.SetParent(null);
+                    BallManager.dropped = false;
+                    Rigidbody rb = ball.GetComponent<Rigidbody>();
+                    rb.isKinematic = false;
+
+                    float speedMultiplier = GetCurrentThrowSpeed();
+
+                    if (speedMultiplier <= .5)
+                        launchAngle = 40f;
+                    else if (speedMultiplier > .5 && speedMultiplier <= 1)
+                        launchAngle = 30f;
+                    else if (speedMultiplier > 1 && speedMultiplier <= 1.5)
+                        launchAngle = 20f;
+                    else if (speedMultiplier > 1.5 && speedMultiplier <= 2)
+                        launchAngle = 5f;
+                    else
+                        launchAngle = 0f;
+
+
+
+                    if (target != null)
                     {
 
                         Vector3 startPos = ball.transform.position;
@@ -146,6 +154,7 @@ public class AI : MonoBehaviour
                         // Calculate initial velocity needed to achieve the desired launch angle
                         float initialVelocity = CalculateLaunchVelocity(distance, yOffset, gravity, launchAngle);
 
+
                         initialVelocity *= speedMultiplier;
 
 
@@ -155,7 +164,7 @@ public class AI : MonoBehaviour
 
                         // Introduce error to the throw
                         float errorMagnitude = 1f; //Change this to increase or decrease throw error
-                        if (UnityEngine.Random.value < 0.2f) //Change the to increase or decrease percent chance of an error happening
+                        if (UnityEngine.Random.value < 0.15f) //Change the to increase or decrease percent chance of an error happening
                         {
                             Vector3 error = new Vector3(UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
                                                          UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
@@ -169,12 +178,67 @@ public class AI : MonoBehaviour
 
                     }
 
-                ball = null;
+                    ball = null;
+                }
+            }
+            else
+            {
+                gameManager.StartCoroutine("returnPlayerToHouse"); //starts a coroutine in the Game Manager that sends the player home 
             }
         }
         else
         {
-            gameManager.StartCoroutine("returnPlayerToHouse"); //starts a coroutine in the Game Manager that sends the player home 
+            yield return new WaitForSeconds(UnityEngine.Random.Range(.25f, .75f));
+
+            target = ChooseThrowTarget();
+
+            yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+
+            if (ball != null)
+            {
+                ball.transform.SetParent(null);
+                BallManager.dropped = false;
+                Rigidbody rb = ball.GetComponent<Rigidbody>();
+                rb.isKinematic = false;
+
+                if (target != null)
+                {
+
+                    Vector3 startPos = ball.transform.position;
+                    Vector3 targetPos = target.transform.position;
+
+                    // Calculate the distance to the target in the horizontal plane
+                    float distance = Vector3.Distance(new Vector3(startPos.x, 0, startPos.z), new Vector3(targetPos.x, 0, targetPos.z));
+
+                    // Calculate the difference in height between the start position and the target position
+                    float yOffset = targetPos.y - startPos.y;
+
+                    float gravity = Physics.gravity.magnitude;
+
+                    // Calculate initial velocity needed to achieve the desired launch angle
+                    float initialVelocity = CalculateLaunchVelocity(distance, yOffset, gravity, launchAngle);
+
+                    // Calculate velocity components
+                    Vector3 velocity = new Vector3(targetPos.x - startPos.x, 0, targetPos.z - startPos.z).normalized * initialVelocity;
+                    velocity.y = initialVelocity * Mathf.Sin(launchAngle * Mathf.Deg2Rad);
+
+                    // Introduce error to the throw
+                    float errorMagnitude = 1f; //Change this to increase or decrease throw error
+                    if (UnityEngine.Random.value < 0.2f) //Change the to increase or decrease percent chance of an error happening
+                    {
+                        Vector3 error = new Vector3(UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
+                                                     UnityEngine.Random.Range(-errorMagnitude, errorMagnitude),
+                                                     UnityEngine.Random.Range(-errorMagnitude, errorMagnitude));
+
+                        velocity += error;
+                    }
+
+                    rb.velocity = velocity;
+
+                }
+
+                ball = null;
+            }
         }
     }
     // Helper method to calculate the launch velocity based on distance, height difference, gravity, and launch angle
@@ -189,7 +253,7 @@ public class AI : MonoBehaviour
     {
 
         int totalCatches = gameManager.TrackAllCatches();
-        float currentSpeed = 1.0f; // Default speed
+        float currentSpeed = 1f; // Default speed
 
         foreach (var speed in ResearchData.LevelData.Speeds)
         {
@@ -206,84 +270,131 @@ public class AI : MonoBehaviour
 
     private GameObject ChooseThrowTarget()
     {
-
-        int totalCatches = gameManager.TrackAllCatches();
-        List<GameObject> potentialTargets = new List<GameObject>(gameManager.playerList);
-        potentialTargets.Remove(this.gameObject); // Exclude this AI from potential targets.
-
-        // Calculate the current chance to target the player from the XML data
-        float accumulatedChance = 0f;
-        foreach (var chance in ResearchData.LevelData.ChancesToPlayer)
+        if(ResearchData.AIPlayers != null && ResearchData.AIPlayers.Count != 0)
         {
-            if (totalCatches <= chance.Throws)
+            int totalCatches = gameManager.TrackAllCatches();
+            List<GameObject> potentialTargets = new List<GameObject>(gameManager.playerList);
+            potentialTargets.Remove(this.gameObject); // Exclude this AI from potential targets.
+
+            // Calculate the current chance to target the player from the XML data
+            float accumulatedChance = 0f;
+            foreach (var chance in ResearchData.LevelData.ChancesToPlayer)
             {
-                accumulatedChance = chance.Chance;
-                break;
+                if (totalCatches <= chance.Throws)
+                {
+                    accumulatedChance = chance.Chance;
+                    break;
+                }
             }
-        }
 
-        // Roll a random number to compare against the calculated chance
-        float roll = UnityEngine.Random.Range(0f, 100f);
-        Debug.Log($"Rolled {roll} against chance of {accumulatedChance}% for targeting the player at {totalCatches} catches.");
+            // Roll a random number to compare against the calculated chance
+            float roll = UnityEngine.Random.Range(0f, 100f);
+            Debug.Log($"Rolled {roll} against chance of {accumulatedChance}% for targeting the player at {totalCatches} catches.");
 
-        // Decide based on the chance whether to target the player or a random AI
-        if (roll < accumulatedChance && gameManager.Player)
-        {
-            Debug.Log("Targeting Player due to chance settings");
-            return gameManager.Player;  // Target the player based on XML defined chance
+            // Decide based on the chance whether to target the player or a random AI
+            if (roll < accumulatedChance && gameManager.Player)
+            {
+                Debug.Log("Targeting Player due to chance settings");
+                foreach(Transform child in gameManager.Player.transform)
+                {
+                    // Target the player based on XML defined chance
+                    if (child.tag.Equals("PlayerPos"))
+                        return child.gameObject;
+                        
+                }
+                return gameManager.Player;
+            }
+            else
+            {
+                // Choose a random AI 
+                return potentialTargets[UnityEngine.Random.Range(1, potentialTargets.Count)];
+            }
         }
         else
         {
-            // Choose a random AI 
-            return potentialTargets[UnityEngine.Random.Range(1, potentialTargets.Count)];
+            float chanceThreshold = 0.8f; // 80%
+            float roll = UnityEngine.Random.Range(0f, 1f); // Random roll between 0 and 1
+            List<GameObject> potentialTargets = new List<GameObject>(gameManager.playerList);
+            potentialTargets.Remove(this.gameObject); // Exclude this AI from potential targets.
+
+            switch (targetingPreference)
+            {
+                case TargetingPreference.Random:
+                    // Return a random player GameObject
+                    if (potentialTargets.Count > 0)
+                    {
+                        int randomIndex = UnityEngine.Random.Range(0, potentialTargets.Count);
+
+                        if (randomIndex== 0)
+                        {
+                            foreach (Transform child in gameManager.Player.transform)
+                            {
+                                // Target the player based on XML defined chance
+                                if (child.tag.Equals("PlayerPos"))
+                                    return child.gameObject;
+
+                            }
+                            
+                        }
+                        return potentialTargets[randomIndex];
+                    }
+                    break;
+                case TargetingPreference.FavorAI:
+                    // Implement logic to favor AI, but with a 20% chance to throw to the player
+                    if (potentialTargets.Count > 0)
+                    {
+                        if (roll < chanceThreshold)
+                        {
+                            // Favor throw to AI 80%
+                            int randomIndex = UnityEngine.Random.Range(1, potentialTargets.Count);
+                            return potentialTargets[randomIndex];
+
+                        }
+                        else
+                        {
+                            // With 20% chance, select the player target instead
+                            foreach (Transform child in gameManager.Player.transform)
+                            {
+                                // Target the player based on XML defined chance
+                                if (child.tag.Equals("PlayerPos"))
+                                    return child.gameObject;
+
+                            }
+                            return gameManager.Player;
+                        }
+                    }
+                    break;
+                case TargetingPreference.FavorPlayer:
+                    // Similar to FavorAI, but primarily targets the player, with a 20% chance for a throw to the AI
+                    if (potentialTargets.Count > 0)
+                    {
+                        if (roll < chanceThreshold)
+                        {
+                            foreach (Transform child in gameManager.Player.transform)
+                            {
+                                // Target the player based on XML defined chance
+                                if (child.tag.Equals("PlayerPos"))
+                                    return child.gameObject;
+
+                            }
+                            return gameManager.Player;
+                        }
+                        else
+                        {
+                            // With 20% chance, excludes playerList[0]
+                            int randomIndex = UnityEngine.Random.Range(1, potentialTargets.Count);
+                            return potentialTargets[randomIndex];
+                        }
+                    }
+                    break;
+            }
+
+            return null;
         }
 
-    //switch (targetingPreference)
-    //        {
-    //            case TargetingPreference.Random:
-    //                // Return a random player GameObject
-    //                if (potentialTargets.Count > 0)
-    //                {
-    //                    int randomIndex = UnityEngine.Random.Range(0, potentialTargets.Count);
-    //                    return potentialTargets[randomIndex];
-    //                }
-    //break;
-    //            case TargetingPreference.FavorAI:
-    //    // Implement logic to favor AI, but with a 20% chance to throw to the player
-    //    if (potentialTargets.Count > 0)
-    //    {
-    //        if (roll < chanceThreshold)
-    //        {
-    //            // Favor throw to AI 80%
-    //            int randomIndex = UnityEngine.Random.Range(1, potentialTargets.Count);
-    //            return potentialTargets[randomIndex];
 
-            //        }
-            //        else
-            //        {
-            //            // With 20% chance, select the player target instead
-            //            return potentialTargets[0];
-            //        }
-            //    }
-            //    break;
-            //case TargetingPreference.FavorPlayer:
-            //    // Similar to FavorAI, but primarily targets the player, with a 20% chance for a throw to the AI
-            //    if (potentialTargets.Count > 0)
-            //    {
-            //        if (roll < chanceThreshold)
-            //        {
-            //            // Directly target the player
-            //            return potentialTargets[0];
-            //        }
-            //        else
-            //        {
-            //            // With 20% chance, excludes playerList[0]
-            //            int randomIndex = UnityEngine.Random.Range(1, potentialTargets.Count);
-            //            return potentialTargets[randomIndex];
-            //        }
-            //    }
-            //    break;
-            //}
+
+        
     }
 
                 

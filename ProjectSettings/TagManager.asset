@@ -10,6 +10,7 @@ TagManager:
   - PlayerSpawn
   - AISpawn
   - PlayerPos
+  - BallSpawn
   layers:
   - Default
   - TransparentFX

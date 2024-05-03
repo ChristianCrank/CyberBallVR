@@ -7463,7 +7463,7 @@ MonoBehaviour:
   launchAngle: 35
   rotationSpeed: 5
   catchCount: 0
-  targetingPreference: 2
+  targetingPreference: 0
 --- !u!65 &7711225824740117770
 BoxCollider:
   m_ObjectHideFlags: 0

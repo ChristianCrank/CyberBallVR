@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Xml.Linq;
 using System.IO;
 using System;
-using static UnityEditor.Recorder.OutputPath;
 
 public class ResearchData : MonoBehaviour
 {
@@ -12,6 +11,8 @@ public class ResearchData : MonoBehaviour
 
     [SerializeField]
     public static LevelData LevelData { get; private set; }
+
+    public static bool isLevelDataLoaded;
     private void Awake()
     {
         AIPlayers = LoadAllPlayers();
@@ -71,10 +72,12 @@ public class ResearchData : MonoBehaviour
         try
         {
             xmlDoc = XDocument.Load(filePath);
+            isLevelDataLoaded = true;
         }
         catch (Exception e)
         {
             Debug.LogError("Failed to load XML Document: " + e.Message);
+            isLevelDataLoaded = false;
             return null;
         }
 
