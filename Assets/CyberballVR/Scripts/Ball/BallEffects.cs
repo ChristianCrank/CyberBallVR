@@ -10,16 +10,20 @@ public class BallEffects : MonoBehaviour
     public int fxChangeInterval;
     ParticleSystem particleSys;
     Outline ballOutline;
+    public AudioSource ballStreak;
+    
+    private float tempPitch;
 
     private void Start()
     {
         particleSys = GetComponentInChildren<ParticleSystem>();
         ballOutline = GetComponent<Outline>();
+        tempPitch = ballStreak.pitch;
 
         var main = particleSys.main;
         main.startSpeed = 10;
 
-        UpdateObjectProperties();
+        UpdateObjectProperties(false);
     }
 
     private void OnEnable()
@@ -41,20 +45,24 @@ public class BallEffects : MonoBehaviour
             grabCount++;
 
             //(change color, speed of particle effects, etc.)
-            UpdateObjectProperties();
+            UpdateObjectProperties(true);
         }
         else
+        {
             ResetGrabCount();
+        }
+            
         
     }
 
-    private void ResetGrabCount()
+    public void ResetGrabCount()
     {
         grabCount = 0;
-        UpdateObjectProperties();
+        
+        UpdateObjectProperties(false);
     }
 
-    private void UpdateObjectProperties()
+    private void UpdateObjectProperties(bool sound)
     {
         if (particleSys != null)
         {
@@ -66,26 +74,52 @@ public class BallEffects : MonoBehaviour
             {
                 main.startColor = Color.red;
                 ballOutline.OutlineColor = Color.red;
+                
             }
-            else if(grabCount >= fxChangeInterval && grabCount < fxChangeInterval * 2) 
+            else if(grabCount == fxChangeInterval) 
             {
                 main.startColor = Color.yellow;
                 ballOutline.OutlineColor = Color.yellow;
+                if(sound)
+                {
+                    ballStreak.pitch = tempPitch;
+                    ballStreak.Play();
+                }
+                    
+
             }
-            else if (grabCount >= fxChangeInterval * 2 && grabCount < fxChangeInterval * 3)
+            else if (grabCount == fxChangeInterval * 2)
             {
                 main.startColor = Color.green;
                 ballOutline.OutlineColor = Color.cyan;
+                if (sound)
+                {
+                    ballStreak.pitch += .25f;
+                    ballStreak.Play();
+                }
+                    
             }
-            else if (grabCount >= fxChangeInterval * 3 && grabCount < fxChangeInterval * 4)
+            else if (grabCount == fxChangeInterval * 3)
             {
                 main.startColor = Color.blue;
                 ballOutline.OutlineColor = Color.blue;
+                if (sound)
+                {
+                    ballStreak.pitch += .25f;
+                    ballStreak.Play();
+                
+                }
             }
-            else if (grabCount >= fxChangeInterval * 4)
+            else if (grabCount == fxChangeInterval * 4)
             {
                 main.startColor = Color.magenta;
                 ballOutline.OutlineColor = Color.magenta;
+                if (sound)
+                {
+                    ballStreak.pitch += .25f;
+                    ballStreak.Play();
+                   
+                }
             }
             
             // Change emmision rate of particle effects based on grab count

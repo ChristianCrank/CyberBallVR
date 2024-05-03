@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject AICharacter;
     public GameObject Player;
     private CharacterController characterController;
+
     public int playerCatchCount;
     public List<GameObject> playerList;
     public Transform houseSpawn;
@@ -149,6 +150,15 @@ public class GameManager : MonoBehaviour
         Debug.Log("SpawnHumanPlayerInField");
         Player.transform.position = pos;
         characterController.transform.position = pos;
+        Player.GetNamedChild("Jimmy").transform.position = pos;
+
+        //foreach(Transform t in Player.GetComponentsInChildren<Transform>())
+        //{
+        //    if(t.tag != "BallSpawn")
+        //    {
+        //        t.position = pos;
+        //    }
+        //}
         Player.transform.rotation = rot;
         characterController.transform.rotation = rot;
         playerMove.SetActive(false);
