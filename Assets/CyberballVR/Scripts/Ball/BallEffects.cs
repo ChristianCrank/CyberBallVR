@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.SceneManagement;
 
 //Made by Christian
 public class BallEffects : MonoBehaviour
@@ -18,7 +19,7 @@ public class BallEffects : MonoBehaviour
     {
         particleSys = GetComponentInChildren<ParticleSystem>();
         ballOutline = GetComponent<Outline>();
-        tempPitch = ballStreak.pitch;
+        if(SceneManager.GetActiveScene().ToString() != "Tutorial") tempPitch = ballStreak.pitch;
 
         var main = particleSys.main;
         main.startSpeed = 10;

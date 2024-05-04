@@ -49,7 +49,7 @@ public class PitchingMachine : MonoBehaviour
 
     private void OnDisable()
     {
-        //EventManager.onTogglePitch -= togglePitch;
+        EventManager.onTogglePitch -= togglePitch;
         //StopCoroutine(SetAim());
     }
 

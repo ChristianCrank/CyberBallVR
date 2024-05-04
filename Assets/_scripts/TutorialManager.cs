@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class TutorialManager : MonoBehaviour
 {
     [SerializeField] GameObject pitchingMachine;
@@ -8,6 +8,8 @@ public class TutorialManager : MonoBehaviour
 
 
     public static bool isTutorial;
+
+    public int score;
 
     public enum State
     {
@@ -33,6 +35,7 @@ public class TutorialManager : MonoBehaviour
     {
         tutorialState = State.Paused;
         isTutorial = true;
+        score = 0;
     }
 
     // Update is called once per frame
@@ -87,8 +90,13 @@ public class TutorialManager : MonoBehaviour
         isTutorial = b;
     }
 
-    public void testing()
+    public void exit()
     {
-        Debug.Log("Testing!!!!");
+        SceneManager.LoadScene("CyberballVR");
     }
+
+    /*public void OnDestroy()
+    {
+        EventManager.onChangeState = null;
+    }*/
 }

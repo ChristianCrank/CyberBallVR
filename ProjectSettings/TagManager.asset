@@ -11,6 +11,9 @@ TagManager:
   - AISpawn
   - PlayerPos
   - BallSpawn
+  - ball
+  - clown
+  - Ground
   layers:
   - Default
   - TransparentFX

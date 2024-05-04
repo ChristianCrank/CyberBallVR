@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ServerBrowser : MonoBehaviour
 {
@@ -45,5 +46,11 @@ public class ServerBrowser : MonoBehaviour
         cancelButton.SetActive(false);
         startButton.SetActive(true);
         yield return null;
+    }
+
+    public void loadTutorial()
+    {
+        //Debug.Log("Button CLicked");
+        SceneManager.LoadScene("Tutorial");
     }
 }

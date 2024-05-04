@@ -65,12 +65,14 @@ public class TutorialBall : MonoBehaviour
         {
             if (hasCollided)
             {
+                Debug.Log("Tutorial hit");
                 stepManager.SendMessage("Next");
                 EventManager.onChangeState?.Invoke(0);
                 EventManager.onSuccessfulCatch?.Invoke();
             }
             else
             {
+                Debug.Log("Tutorial miss");
                 stepManager.SendMessage("jumpTo", 1);
                 EventManager.onChangeState?.Invoke(1);
             }

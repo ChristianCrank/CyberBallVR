@@ -14,6 +14,8 @@ public class Clown : MonoBehaviour
     //private bool hasCollided;
 
     public Transform enablePosition;
+    public ScoreBoard scoreBoard;
+    public int points;
     
 
     void Start()
@@ -27,6 +29,14 @@ public class Clown : MonoBehaviour
         transform.position = enablePosition.position;
         transform.rotation = enablePosition.rotation;
         //hasCollided = false;
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if(collision.transform.CompareTag("Ground"))
+        {
+            scoreBoard.score += points;
+        }
     }
 
     /*public void OnCollisionEnter(Collision collision)
