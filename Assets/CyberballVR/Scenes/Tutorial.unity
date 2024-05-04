@@ -4864,11 +4864,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 385987691}
   m_CullTransparentMesh: 1
---- !u!4 &399935032 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8257886424951053817, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
-  m_PrefabInstance: {fileID: 2697173562971606972}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &404930929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2425246255955293168, guid: a66f041a64f319747818b97fe12ca10c, type: 3}
@@ -6506,7 +6501,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83cf46e400c28424f901101b6ad9ab1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 399935032}
+  playerParent: {fileID: 2697173562971606973}
+  jimmy: {fileID: 2697173562971606974}
+  characterController: {fileID: 2697173562971606975}
 --- !u!1 &529608482
 GameObject:
   m_ObjectHideFlags: 0
@@ -17620,11 +17617,11 @@ MonoBehaviour:
   pitches:
   - rotation: 20
     force: 2.1
-  - rotation: 25
+  - rotation: 22
     force: 1.9
-  - rotation: 30
+  - rotation: 27
     force: 1.8
-  - rotation: 35
+  - rotation: 33
     force: 1.7
 --- !u!1001 &1373895678
 PrefabInstance:
@@ -28801,6 +28798,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3688916049821114189, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4700244390908786617, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -28894,6 +28895,21 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
+--- !u!4 &2697173562971606973 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 561296952772566384, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
+  m_PrefabInstance: {fileID: 2697173562971606972}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2697173562971606974 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1047476693113169407, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
+  m_PrefabInstance: {fileID: 2697173562971606972}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &2697173562971606975 stripped
+CharacterController:
+  m_CorrespondingSourceObject: {fileID: 3688916049821114189, guid: 1ffa6bbe571602745896ede317522bcc, type: 3}
+  m_PrefabInstance: {fileID: 2697173562971606972}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5865723314006822777
 PrefabInstance:
   m_ObjectHideFlags: 0
