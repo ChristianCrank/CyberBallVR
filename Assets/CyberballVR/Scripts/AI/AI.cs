@@ -11,7 +11,7 @@ using System.Linq;
 public class AI : MonoBehaviour
 {
     GameManager gameManager;
-    GameObject ball;
+    public GameObject ball;
     [SerializeField]
     GameObject target;
     Quaternion targetRotation;

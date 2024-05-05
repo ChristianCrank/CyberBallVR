@@ -5,6 +5,7 @@ using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem.HID;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.SceneManagement;
 
 //Made by Christian
 public class GameManager : MonoBehaviour
@@ -130,16 +131,28 @@ public class GameManager : MonoBehaviour
         Debug.Log("ReturnedPlayerToHouse");
         fadeScript.fadeToBlack("Lobby Closing...", 3f);
         yield return new WaitForSeconds(3f);
-        Player.transform.position = houseSpawn.position;
-        playerMove.SetActive(true);
-        //playerList.Add(Player); Just disabled this on a hunch
-        Player.transform.Find("PlayerStand").gameObject.SetActive(false);
-        DisableHandRays(true);
-        for (int i = 1; i < playerList.Count; i++)
-        {
-            playerList[i].GetComponent<AI>().catchCount = 0;
-            playerList[i].SetActive(false);
-        }
+
+        SceneManager.LoadScene("CyberballVR");
+        //Player.transform.position = houseSpawn.position;
+        //playerMove.SetActive(true);
+        //playerList.Add(Player); 
+        //ball.transform.SetParent(null);
+        //ball.GetComponent<BallEffects>().ResetGrabCount();
+        //ball.gameObject.SetActive(false);
+        //ballManager.ballSpawn = GameObject.FindGameObjectWithTag("BallSpawn").transform;
+        //currentBallHolder = Player;
+
+        //Player.transform.Find("PlayerStand").gameObject.SetActive(false);
+        //AlternateHandRays(true);
+        
+        //for (int i = 1; i < playerList.Count; i++)
+        //{
+        //    playerList[i].GetComponent<AI>().catchCount = 0;
+        //    playerList[i].SetActive(false);
+            
+        //}
+
+
     }
 
     private void SpawnHumanPlayerInHouse()
@@ -158,22 +171,16 @@ public class GameManager : MonoBehaviour
         characterController.transform.position = pos;
         Player.GetNamedChild("Jimmy").transform.position = pos;
 
-        //foreach(Transform t in Player.GetComponentsInChildren<Transform>())
-        //{
-        //    if(t.tag != "BallSpawn")
-        //    {
-        //        t.position = pos;
-        //    }
-        //}
         Player.transform.rotation = rot;
         characterController.transform.rotation = rot;
+  
         playerMove.SetActive(false);
-        DisableHandRays(false);
+        AlternateHandRays(false);
         Player.transform.Find("PlayerStand").gameObject.SetActive(true);   //.GetNamedChild("PlayerStand").SetActive(true);
         StartCoroutine(SetupBallGM());
     }
    
-    public void DisableHandRays(bool flag)
+    public void AlternateHandRays(bool flag)
     {
         foreach (GameObject hr in handRays)
         {
@@ -181,9 +188,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DisableHandRays()
+    {
+        foreach (GameObject hr in handRays)
+        {
+            hr.gameObject.SetActive(false);
+        }
+    }
     IEnumerator SetupBallGM()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         ballManager.SetupBall();
     }
 
@@ -203,7 +217,7 @@ public class GameManager : MonoBehaviour
             Quaternion spawnRotation;
             if (i == 0) 
             {
-                spawnRotation = Quaternion.Euler(0, -angle * Mathf.Rad2Deg - 90, 0);
+                spawnRotation = Quaternion.Euler(0, -angle * Mathf.Rad2Deg -90, 0);
             }
             else
             {
